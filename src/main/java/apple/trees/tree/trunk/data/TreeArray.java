@@ -1,5 +1,7 @@
 package apple.trees.tree.trunk.data;
 
+import com.sun.javafx.geom.Vec3d;
+
 public class TreeArray {
     private TreeStep[][][] tree;
 
@@ -29,21 +31,28 @@ public class TreeArray {
     /**
      * places a treeStep at that loc
      *
-     * @param x             the current x index
-     * @param z             the current z index
-     * @param y             the current y index
-     * @param xDirection    the current slope in x
-     * @param zDirection    the current slope in z
-     * @param yDirection    the current slope in y
-     * @param xSlopeOfSlope the current acceleration in x
-     * @param zSlopeOfSlope the current acceleration in y
-     * @param ySlopeOfSlope the current acceleration in z
+     * @param x            the current x index
+     * @param z            the current z index
+     * @param y            the current y index
+     * @param direction    the current slope
+     * @param slopeOfSlope the current acceleration
      * @return the newly created step
      */
-    public TreeStep put(int x, int z, int y, float xDirection, float zDirection, float yDirection, float xSlopeOfSlope, float zSlopeOfSlope, float ySlopeOfSlope) {
-        TreeStep step = new TreeStep(x, z, y, xDirection, zDirection, yDirection, xSlopeOfSlope, ySlopeOfSlope, zSlopeOfSlope);
+    public TreeStep put(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope) {
+        TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope);
         tree[x][y][z] = step;
         return step;
     }
 
+    public int sizeX() {
+        return tree.length;
+    }
+
+    public int sizeY() {
+        return tree[0].length;
+    }
+
+    public int sizeZ() {
+        return tree[1].length;
+    }
 }

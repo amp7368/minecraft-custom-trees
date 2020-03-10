@@ -1,6 +1,7 @@
 package apple.trees.tree.trunk;
 
 import apple.trees.tree.trunk.data.TreeArray;
+import com.sun.javafx.geom.Vec3d;
 
 import java.util.Random;
 
@@ -17,7 +18,7 @@ public class TreeArrayStressTest {
             System.out.println("x of " + i + " out of " + x);
             for (int j = 0; j < z; j++) {
                 for (int k = 0; k < y; k++) {
-                    array.put(i, j, k, random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat());
+                    array.put(i, j, k, new Vec3d(random.nextFloat(), random.nextFloat(), random.nextFloat()), new Vec3d(random.nextFloat(), random.nextFloat(), random.nextFloat()));
                 }
             }
         }

@@ -1,6 +1,8 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.data.TreeArray;
+import apple.trees.tree.trunk.utils.BaseTrunk;
+import com.sun.javafx.geom.Vec3d;
 
 public class Trunk {
 
@@ -14,8 +16,9 @@ public class Trunk {
      * @param maxLean        (between 0 and 1) the maximum amount a tree is allowed to lean
      * @param leanStart      (between 0 and 1) the starting lean of the trunk
      */
-    private Trunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, float leanStart) {
+    private Trunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
         TreeArray tree = new TreeArray(100, 100, 100);
+        tree = BaseTrunk.createBaseTrunk(tree, trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart);
     }
 
     /**
