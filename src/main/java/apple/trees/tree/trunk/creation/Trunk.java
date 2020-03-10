@@ -15,7 +15,7 @@ public class Trunk {
      * @param leanStart      (between 0 and 1) the starting lean of the trunk
      */
     private Trunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, float leanStart) {
-        TreeArray tree = new TreeArray();
+        TreeArray tree = new TreeArray(100, 100, 100);
     }
 
     /**
