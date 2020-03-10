@@ -1,9 +1,9 @@
-name: AppleKarma
+name: AppleCustomTrees
 version: 1.0
 api-version: 1.15
 author: Apple
-main: apple.karma.KarmaMain
+main: apple.trees.TreeMain
 description: Rewards players that build with points
 commands:
-  ping:
-    description: ping command
+  tree_create:
+    description: creates a tre
