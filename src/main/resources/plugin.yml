@@ -1,0 +1,9 @@
+name: AppleKarma
+version: 1.0
+api-version: 1.15
+author: Apple
+main: apple.karma.KarmaMain
+description: Rewards players that build with points
+commands:
+  ping:
+    description: ping command
