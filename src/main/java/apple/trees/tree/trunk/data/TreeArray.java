@@ -24,8 +24,8 @@ public class TreeArray {
      * @param y the z loc
      * @return the step at that location
      */
-    public TreeStep get(int x, int z, int y) {
-        return tree[x][z][y];
+    public TreeStep get(int x, int y, int z) {
+        return tree[x][y][z];
     }
 
     /**
@@ -38,8 +38,8 @@ public class TreeArray {
      * @param slopeOfSlope the current acceleration
      * @return the newly created step
      */
-    public TreeStep put(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope) {
-        TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope);
+    public TreeStep put(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope, double width) {
+        TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope, width);
         tree[x][y][z] = step;
         return step;
     }
@@ -54,5 +54,51 @@ public class TreeArray {
 
     public int sizeZ() {
         return tree[1].length;
+    }
+
+    public Vec3d getAvgDirection(int x, int z, int y) {
+        int avgX = 0;
+        int avgY = 0;
+        int avgZ = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    Vec3d vec = tree[x + i][y + j][z + k].direction;
+                    avgX += vec.x;
+                    avgY += vec.y;
+                    avgZ += vec.z;
+                }
+            }
+        }
+        return new Vec3d(avgX, avgY, avgZ);
+    }
+
+    public Vec3d getAvgSlopeOfSlope(int x, int y, int z) {
+        int avgX = 0;
+        int avgY = 0;
+        int avgZ = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    Vec3d vec = tree[x + i][y + j][z + k].direction;
+                    avgX += vec.x;
+                    avgY += vec.y;
+                    avgZ += vec.z;
+                }
+            }
+        }
+        return new Vec3d(avgX, avgY, avgZ);
+    }
+
+    public double getAvgWidth(int x, int y, int z) {
+        int avg = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    avg += tree[x + i][y + j][z + k].width;
+                }
+            }
+        }
+        return avg;
     }
 }
