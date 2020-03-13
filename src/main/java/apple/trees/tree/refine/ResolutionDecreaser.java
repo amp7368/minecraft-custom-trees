@@ -29,7 +29,7 @@ public class ResolutionDecreaser {
                     int zOld = (int) (z * ratio);
 
                     // if we should add it to the avg
-                    if (tree.getAvgTrunkTrue(xOld, yOld, zOld, intRatio) > .5) {
+                    if (tree.getAvgTrunkTrue(xOld, yOld, zOld, intRatio) > .01) {
                         Vec3d newDirection = tree.getAvgDirection(xOld, yOld, zOld, intRatio);
                         Vec3d newSlopeOfSlope = tree.getAvgSlopeOfSlope(xOld, yOld, zOld, intRatio);
                         double newWidth = tree.getAvgWidth(xOld, yOld, zOld, intRatio);

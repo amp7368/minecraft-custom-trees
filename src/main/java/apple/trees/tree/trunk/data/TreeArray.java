@@ -39,9 +39,12 @@ public class TreeArray {
      * @return the newly created step
      */
     public TreeStep put(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope, double width) {
-        TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope, width);
-        tree[x][y][z] = step;
-        return step;
+        if (x < sizeX() && y < sizeY() && z < sizeZ() && x > 0 && y > 0 && z > 0) {
+            TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope, width);
+            tree[x][y][z] = step;
+            return step;
+        }
+        return null;
     }
 
     public int sizeX() {
@@ -49,11 +52,13 @@ public class TreeArray {
     }
 
     public int sizeY() {
+        //todo
         return tree[0].length;
     }
 
     public int sizeZ() {
-        return tree[1].length;
+        //todo
+        return tree[0][0].length;
     }
 
     /**
@@ -73,18 +78,31 @@ public class TreeArray {
         int avgX = 0;
         int avgY = 0;
         int avgZ = 0;
+        int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
                 for (int k = -distance; k <= distance; k++) {
-                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    TreeStep treeStep;
+                    try {
+                        treeStep = tree[x + i][y + j][z + k];
+                    } catch (IndexOutOfBoundsException ignored) {
+                        continue;
+                    }
                     if (treeStep == null)
                         continue;
                     Vec3d vec = treeStep.direction;
                     avgX += vec.x;
                     avgY += vec.y;
                     avgZ += vec.z;
+                    totalNotNull++;
+
                 }
             }
+        }
+        if (totalNotNull != 0) {
+            avgX /= totalNotNull;
+            avgY /= totalNotNull;
+            avgZ /= totalNotNull;
         }
         return new Vec3d(avgX, avgY, avgZ);
     }
@@ -106,18 +124,31 @@ public class TreeArray {
         int avgX = 0;
         int avgY = 0;
         int avgZ = 0;
+        int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
                 for (int k = -distance; k <= distance; k++) {
-                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    TreeStep treeStep;
+                    try {
+                        treeStep = tree[x + i][y + j][z + k];
+
+                    } catch (IndexOutOfBoundsException ignored) {
+                        continue;
+                    }
                     if (treeStep == null)
                         continue;
-                    Vec3d vec = treeStep.direction;
+                    totalNotNull++;
+                    Vec3d vec = treeStep.slopeOfSlope;
                     avgX += vec.x;
                     avgY += vec.y;
                     avgZ += vec.z;
                 }
             }
+        }
+        if (totalNotNull != 0) {
+            avgX /= totalNotNull;
+            avgY /= totalNotNull;
+            avgZ /= totalNotNull;
         }
         return new Vec3d(avgX, avgY, avgZ);
     }
@@ -137,15 +168,27 @@ public class TreeArray {
         }
         distance = distance / 2;
         int avg = 0;
+        int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
                 for (int k = -distance; k <= distance; k++) {
-                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    TreeStep treeStep;
+                    try {
+                        treeStep = tree[x + i][y + j][z + k];
+
+                    } catch (IndexOutOfBoundsException ignored) {
+                        continue;
+                    }
                     if (treeStep == null)
                         continue;
                     avg += treeStep.width;
+                    totalNotNull++;
+
                 }
             }
+        }
+        if (totalNotNull != 0) {
+            avg /= totalNotNull;
         }
         return avg;
     }
@@ -161,8 +204,13 @@ public class TreeArray {
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
                 for (int k = -distance; k <= distance; k++) {
-                    TreeStep treeStep = tree[x + i][y + j][z + k];
-                    if (treeStep == null) {
+                    TreeStep treeStep;
+                    try {
+                        treeStep = tree[x + i][y + j][z + k];
+                    } catch (IndexOutOfBoundsException ignored) {
+                        continue;
+                    }
+                    if (treeStep != null) {
                         trues++;
                     }
                     totals++;

@@ -35,10 +35,14 @@ public class BaseTrunk {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree, trunk_width, leanStart));
 
-        TreeStep lastTreeStep = lastTreeSteps.remove(0);
+        TreeStep lastTreeStep = lastTreeSteps.get(0);
         for (int currentCompletedSteps = 0; currentCompletedSteps < maxCompletedSteps && lastTreeStep.y < trunk_height && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
+            lastTreeStep = lastTreeSteps.remove(0);
             TreeStep currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
             lastTreeSteps.add(currentTreeStep);
+            if (currentTreeStep.x == 82&&currentTreeStep.y == 82&&currentTreeStep.z == 54) {
+                int a = 1;
+            }
         }
 
 
@@ -47,6 +51,7 @@ public class BaseTrunk {
 
     /**
      * get the next tree step from what was given about the last tree step
+     * add any steps to the tree
      *
      * @param tree           the entire tree and all the steps within it
      * @param lastTreeStep   the tree step that was last created
@@ -55,9 +60,9 @@ public class BaseTrunk {
      * @return the new main step in the tree
      */
     private static TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, double leanMagnitude, double leanLikelihood) {
-        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y);
-        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
-        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
+        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y, 3);
+        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
 
 
         // get the location of the newStep
@@ -95,6 +100,7 @@ public class BaseTrunk {
         for (Vec3d loc : locations) {
             tree.put((int) loc.x, (int) loc.y, (int) loc.z, newDirection, newSlopeOfSlope, newWidth);
         }
+        tree.put(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
 
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
@@ -137,7 +143,7 @@ public class BaseTrunk {
 
     /**
      * todo is this a good estimate?
-     * good to have decay rate about 7.5 (bigger decay means bigger result
+     * good to have decay rate about 1/7.5 (bigger decay means bigger result
      *
      * @param lastWidth what the width used to be
      * @param decayRate what the decay rate is
@@ -150,7 +156,12 @@ public class BaseTrunk {
                         / Math.pow(BELL_CURVE_A, 2)));
     }
 
-
+    /**
+     * @param lastSlopeOfSlope
+     * @param leanMagnitude
+     * @param leanLikelihood
+     * @return
+     */
     public static Vec3d getRandomChangeSlopeOfSlope(Vec3d lastSlopeOfSlope, double leanMagnitude, double leanLikelihood) {
         // todo use leanLikelihood
         // get the magnitude of change of slope
@@ -161,9 +172,25 @@ public class BaseTrunk {
         double r1 = random.nextDouble();
         double r2 = random.nextDouble();
         double r3 = random.nextDouble();
-        newSlopeOfSlope.x += (r1 / newLeanMagnitude * 3);
-        newSlopeOfSlope.y += (r2 / newLeanMagnitude * 3);
-        newSlopeOfSlope.z += (r3 / newLeanMagnitude * 3);
+        double sum = r1 + r2 + r3;
+
+        double addX = (r1 / sum * 3 * newLeanMagnitude);
+        double addY = (r2 / sum * 3 * newLeanMagnitude);
+        double addZ = (r3 / sum * 3 * newLeanMagnitude);
+
+        //negitify some of the numbers
+        if (random.nextDouble() < .5)
+            addX = -addX;
+        if (random.nextDouble() < .5)
+            addY = -addY;
+        if (random.nextDouble() < .5)
+            addZ = -addZ;
+
+        // add the changes to the old vector
+        newSlopeOfSlope.x += addX;
+        newSlopeOfSlope.y += addY;
+        newSlopeOfSlope.z += addZ;
+
 
         return newSlopeOfSlope;
     }
