@@ -56,14 +56,30 @@ public class TreeArray {
         return tree[1].length;
     }
 
-    public Vec3d getAvgDirection(int x, int z, int y) {
+    /**
+     * gets the average direction of the tree around that area
+     *
+     * @param x        the x to get the avg at
+     * @param z        the y to get the avg at
+     * @param y        the z to get the avg at
+     * @param distance how far to look around that xyz (-1 for default 3)
+     * @return the avg direction
+     */
+    public Vec3d getAvgDirection(int x, int z, int y, int distance) {
+        if (distance == -1) {
+            distance = 3;
+        }
+        distance = distance / 2;
         int avgX = 0;
         int avgY = 0;
         int avgZ = 0;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    Vec3d vec = tree[x + i][y + j][z + k].direction;
+        for (int i = -distance; i <= distance; i++) {
+            for (int j = -distance; j <= distance; j++) {
+                for (int k = -distance; k <= distance; k++) {
+                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    if (treeStep == null)
+                        continue;
+                    Vec3d vec = treeStep.direction;
                     avgX += vec.x;
                     avgY += vec.y;
                     avgZ += vec.z;
@@ -73,14 +89,30 @@ public class TreeArray {
         return new Vec3d(avgX, avgY, avgZ);
     }
 
-    public Vec3d getAvgSlopeOfSlope(int x, int y, int z) {
+    /**
+     * gets the average slopeOfSlope of the tree around that location
+     *
+     * @param x        the x to get the avg at
+     * @param z        the y to get the avg at
+     * @param y        the z to get the avg at
+     * @param distance how far to look around that xyz (-1 for default 3)
+     * @return the avg slopeOfSlope
+     */
+    public Vec3d getAvgSlopeOfSlope(int x, int y, int z, int distance) {
+        if (distance == -1) {
+            distance = 3;
+        }
+        distance = distance / 2;
         int avgX = 0;
         int avgY = 0;
         int avgZ = 0;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    Vec3d vec = tree[x + i][y + j][z + k].direction;
+        for (int i = -distance; i <= distance; i++) {
+            for (int j = -distance; j <= distance; j++) {
+                for (int k = -distance; k <= distance; k++) {
+                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    if (treeStep == null)
+                        continue;
+                    Vec3d vec = treeStep.direction;
                     avgX += vec.x;
                     avgY += vec.y;
                     avgZ += vec.z;
@@ -90,15 +122,56 @@ public class TreeArray {
         return new Vec3d(avgX, avgY, avgZ);
     }
 
-    public double getAvgWidth(int x, int y, int z) {
+    /**
+     * gets the average width of the tree around that location
+     *
+     * @param x        the x to get the avg at
+     * @param z        the y to get the avg at
+     * @param y        the z to get the avg at
+     * @param distance how far to look around that xyz (-1 for default 3)
+     * @return the avg width
+     */
+    public double getAvgWidth(int x, int y, int z, int distance) {
+        if (distance == -1) {
+            distance = 3;
+        }
+        distance = distance / 2;
         int avg = 0;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    avg += tree[x + i][y + j][z + k].width;
+        for (int i = -distance; i <= distance; i++) {
+            for (int j = -distance; j <= distance; j++) {
+                for (int k = -distance; k <= distance; k++) {
+                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    if (treeStep == null)
+                        continue;
+                    avg += treeStep.width;
                 }
             }
         }
         return avg;
+    }
+
+
+    public double getAvgTrunkTrue(int x, int y, int z, int distance) {
+        if (distance == -1) {
+            distance = 3;
+        }
+        distance = distance / 2;
+        int trues = 0;
+        int totals = 0;
+        for (int i = -distance; i <= distance; i++) {
+            for (int j = -distance; j <= distance; j++) {
+                for (int k = -distance; k <= distance; k++) {
+                    TreeStep treeStep = tree[x + i][y + j][z + k];
+                    if (treeStep == null) {
+                        trues++;
+                    }
+                    totals++;
+                }
+            }
+        }
+        if (totals == 0) {
+            return 0;
+        }
+        return ((double) trues) / totals;
     }
 }
