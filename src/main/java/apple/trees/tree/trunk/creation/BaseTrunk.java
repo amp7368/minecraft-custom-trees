@@ -5,6 +5,7 @@ import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 
 public class BaseTrunk {
@@ -33,15 +34,24 @@ public class BaseTrunk {
      */
     public static TreeArray createBaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
-        lastTreeSteps.add(createBaseStart(tree, trunk_width, leanStart));
+        lastTreeSteps.add(createBaseStart(tree, new Vec3d(0, 1, 0), trunk_width, leanStart));
 
         TreeStep lastTreeStep = lastTreeSteps.get(0);
+
+
+        // loop until all the ends are finished
+        treeStepLoop:
         for (int currentCompletedSteps = 0; currentCompletedSteps < maxCompletedSteps && lastTreeStep.y < trunk_height && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
             lastTreeStep = lastTreeSteps.remove(0);
+            while (lastTreeStep == null) {
+                if (lastTreeSteps.isEmpty())
+                    break treeStepLoop;
+                lastTreeStep = lastTreeSteps.remove(0);
+            }
+            //todo branch off
             TreeStep currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
             lastTreeSteps.add(currentTreeStep);
         }
-
 
         return tree;
     }
@@ -61,7 +71,6 @@ public class BaseTrunk {
         Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
         double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
 
-
         // get the location of the newStep
 
         // get the immediate location
@@ -70,7 +79,9 @@ public class BaseTrunk {
         double zFine = lastTreeStep.z + lastDirection.z;
 
         // keep going in that direction until you make it to a new square
-        while ((int) xFine == lastTreeStep.x && (int) yFine == lastTreeStep.y && (int) zFine == lastTreeStep.z) {
+        for (int i = 0; (int) xFine == lastTreeStep.x && (int) yFine == lastTreeStep.y && (int) zFine == lastTreeStep.z; i++) {
+            if (i == 100)
+                return null;
             xFine += lastTreeStep.x + lastDirection.x;
             yFine += lastTreeStep.y + lastDirection.y;
             zFine += lastTreeStep.z + lastDirection.z;
@@ -81,6 +92,7 @@ public class BaseTrunk {
 
         // make a list of the locations for the next full step
         ArrayList<Vec3d> locations = getNearbySquares(xBroad, yBroad, zBroad, xFine, yFine, zFine);
+        locations.addAll(getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z)));
 
         // get the direction of the newStep
         double newDirectionX = lastDirection.x + lastSlopeOfSlope.x;
@@ -96,15 +108,65 @@ public class BaseTrunk {
 
         for (Vec3d loc : locations) {
             tree.put((int) loc.x, (int) loc.y, (int) loc.z, newDirection, newSlopeOfSlope, newWidth);
-            System.out.println("x:" + loc.x + " ,y:" + loc.y + " ,z:" + loc.z + " is not null");
         }
         tree.put(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
-        System.out.println("x:" + xFine + " ,y:" + yFine + " ,z:" + zFine + " is not null");
-        System.out.println("slope: " +"x:" + newSlopeOfSlope.x + " ,y:" + newSlopeOfSlope.y + " ,z:" + newSlopeOfSlope.z);
-        System.out.println("direction: " +"x:" + newDirection.x + " ,y:" + newDirection.y + " ,z:" + newDirection.z);
+        System.out.println("x:" + xBroad + " ,y:" + yBroad + " ,z:" + zBroad + " is not null");
+        System.out.println("slope: " + "x:" + newSlopeOfSlope.x + " ,y:" + newSlopeOfSlope.y + " ,z:" + newSlopeOfSlope.z);
+        System.out.println("direction: " + "x:" + newDirection.x + " ,y:" + newDirection.y + " ,z:" + newDirection.z);
         System.out.println("full step\n");
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
+
+    private static ArrayList<Vec3d> getTrailingSquares(Vec3d lastDirection, Vec3d lastTreeStepLocation) {
+        ArrayList<Vec3d> locations = new ArrayList<>();
+
+        // make the unit vector of lastDirection
+        Vec3d unitLastDirection = new Vec3d();
+        double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
+        unitLastDirection.x = lastDirection.x / magnitude;
+        unitLastDirection.y = lastDirection.y / magnitude;
+        unitLastDirection.z = lastDirection.z / magnitude;
+
+
+        double maxX = lastDirection.x + lastTreeStepLocation.x;
+        double maxY = lastDirection.y + lastTreeStepLocation.y;
+        double maxZ = lastDirection.z + lastTreeStepLocation.z;
+
+        // keep going in that direction until all the inbetweens are filled
+        for (double x = lastTreeStepLocation.x; x < maxX; x += unitLastDirection.x) {
+            for (double y = lastTreeStepLocation.y; y < maxY; y += unitLastDirection.y) {
+                for (double z = lastTreeStepLocation.z; z < maxZ; z += unitLastDirection.z) {
+                    boolean addMe = true;
+                    for (Vec3d location : locations) {
+                        if (location.x == x && location.y == y && location.z == z) {
+                            addMe = false;
+                            break;
+                        }
+                    }
+                    if (addMe) {
+                        locations.add(new Vec3d(x, y, z));
+
+
+                        //todo maybe get rid of this vvv
+                        ArrayList<Vec3d> subLocations = getNearbySquares((int) x, (int) y, (int) z, x, y, z);
+                        for (Vec3d subLocation : subLocations) {
+                            addMe = true;
+                            for (Vec3d location : locations) {
+                                if (location.x == x && location.y == y && location.z == z) {
+                                    addMe = false;
+                                    break;
+                                }
+                            }
+                            if (addMe)
+                                locations.add(subLocation);
+                        }
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
 
     /**
      * gets all the squares nearby to the location sizeof (0, 1, 2, or 3) returned
@@ -122,8 +184,8 @@ public class BaseTrunk {
 
         // see if it is close to a boundary
         double xDecimal = xFine - xBroad;
-        double yDecimal = xFine - yBroad;
-        double zDecimal = xFine - zBroad;
+        double yDecimal = yFine - yBroad;
+        double zDecimal = zFine - zBroad;
         if (xDecimal < .25) {
             locations.add(new Vec3d(xBroad - 1, yBroad, zBroad));
         } else if (xDecimal > .75) {
@@ -196,7 +258,8 @@ public class BaseTrunk {
         return newSlopeOfSlope;
     }
 
-    private static TreeStep createBaseStart(TreeArray tree, int trunk_width, Vec3d leanStart) {
+
+    private static TreeStep createBaseStart(TreeArray tree, Vec3d direction, int trunk_width, Vec3d leanStart) {
         int centerX = tree.sizeX() / 2;
         int centerY = 0;
         int centerZ = tree.sizeZ() / 2;
@@ -208,7 +271,7 @@ public class BaseTrunk {
                 if (xi == 0 && zi == 0) {
                     int a = 3;
                 }
-                tree.put(centerX + xi, centerY, centerZ + zi, leanStart, new Vec3d(0, 0, 0), trunk_width);
+                tree.put(centerX + xi, centerY, centerZ + zi, leanStart, direction, trunk_width);
             }
         }
         return tree.get(centerX, centerY, centerZ);
