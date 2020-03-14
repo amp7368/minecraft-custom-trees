@@ -1,7 +1,6 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.data.TreeArray;
-import apple.trees.tree.trunk.utils.BaseTrunk;
 import com.sun.javafx.geom.Vec3d;
 
 public class Trunk {

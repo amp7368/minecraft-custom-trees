@@ -19,7 +19,7 @@ public class TreeStep {
      * @param direction    the current slope
      * @param slopeOfSlope the current acceleration
      */
-    public TreeStep(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope, double width) {
+    public TreeStep(int x, int y, int z, Vec3d direction, Vec3d slopeOfSlope, double width) {
         this.x = x;
         this.y = y;
         this.z = z;

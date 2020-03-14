@@ -1,5 +1,6 @@
 package apple.trees.tree.trunk.utils;
 
+import apple.trees.tree.trunk.creation.BaseTrunk;
 import com.sun.javafx.geom.Vec3d;
 
 public class BaseTrunkTest {

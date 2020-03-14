@@ -1,4 +1,4 @@
-package apple.trees.tree.trunk.utils;
+package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
@@ -100,7 +100,9 @@ public class BaseTrunk {
         }
         tree.put(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
         System.out.println("x:" + xFine + " ,y:" + yFine + " ,z:" + zFine + " is not null");
-        System.out.println("full step");
+        System.out.println("slope: " +"x:" + newSlopeOfSlope.x + " ,y:" + newSlopeOfSlope.y + " ,z:" + newSlopeOfSlope.z);
+        System.out.println("direction: " +"x:" + newDirection.x + " ,y:" + newDirection.y + " ,z:" + newDirection.z);
+        System.out.println("full step\n");
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
 
@@ -196,17 +198,20 @@ public class BaseTrunk {
 
     private static TreeStep createBaseStart(TreeArray tree, int trunk_width, Vec3d leanStart) {
         int centerX = tree.sizeX() / 2;
+        int centerY = 0;
         int centerZ = tree.sizeZ() / 2;
-        int centerY = tree.sizeY() / 2;
 
 
         int trunk_width_half = trunk_width / 2;
-        for (int xi = -(trunk_width - 1) / 2; xi < trunk_width_half; xi++) {
-            for (int zi = -(trunk_width - 1) / 2; zi < trunk_width_half; zi++) {
-                tree.put(centerX, centerZ, centerY, leanStart, new Vec3d(0, 0, 0), trunk_width);
+        for (int xi = -trunk_width_half; xi < trunk_width_half; xi++) {
+            for (int zi = -trunk_width_half; zi < trunk_width_half; zi++) {
+                if (xi == 0 && zi == 0) {
+                    int a = 3;
+                }
+                tree.put(centerX + xi, centerY, centerZ + zi, leanStart, new Vec3d(0, 0, 0), trunk_width);
             }
         }
-        return tree.get(centerX, centerZ, centerY);
+        return tree.get(centerX, centerY, centerZ);
     }
 
 }

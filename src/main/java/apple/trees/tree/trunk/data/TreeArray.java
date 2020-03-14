@@ -38,9 +38,9 @@ public class TreeArray {
      * @param slopeOfSlope the current acceleration
      * @return the newly created step
      */
-    public TreeStep put(int x, int z, int y, Vec3d direction, Vec3d slopeOfSlope, double width) {
-        if (x < sizeX() && y < sizeY() && z < sizeZ() && x > 0 && y > 0 && z > 0) {
-            TreeStep step = new TreeStep(x, z, y, direction, slopeOfSlope, width);
+    public TreeStep put(int x, int y, int z, Vec3d direction, Vec3d slopeOfSlope, double width) {
+        if (x < sizeX() && y < sizeY() && z < sizeZ() && x >= 0 && y >= 0 && z >= 0) {
+            TreeStep step = new TreeStep(x, y, z, direction, slopeOfSlope, width);
             tree[x][y][z] = step;
             return step;
         }
