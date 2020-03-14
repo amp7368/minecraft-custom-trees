@@ -1,5 +1,6 @@
 package apple.trees.tree.trunk;
 
+import apple.trees.tree.refine.ResolutionDecreaser;
 import apple.trees.tree.trunk.creation.Trunk;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeArrayStressTest;
@@ -12,6 +13,7 @@ public class StressTest {
 //        TreeArrayStressTest.treeArrayTest();
 //        BaseTrunkTest.baseTrunkTest();
         TreeArray tree = Trunk.makeTrunkFromRaw(10, 100, 3, 3, 10, 1);
+        tree = ResolutionDecreaser.pixelify(tree,3);
         treeIsNull(tree);
     }
 

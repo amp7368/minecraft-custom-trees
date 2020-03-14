@@ -16,7 +16,7 @@ public class Trunk {
      * @param maxLean        (between 0 and 1) the maximum amount a tree is allowed to lean
      * @param leanStart      (between 0 and 1) the starting lean of the trunk
      */
-    private static TreeArray makeTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
+    public static TreeArray makeTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
         TreeArray tree = new TreeArray(100, 100, 100);
         BaseTrunk.createBaseTrunk(tree, trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart);
         return tree;

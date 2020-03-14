@@ -40,9 +40,6 @@ public class BaseTrunk {
             lastTreeStep = lastTreeSteps.remove(0);
             TreeStep currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
             lastTreeSteps.add(currentTreeStep);
-            if (currentTreeStep.x == 82&&currentTreeStep.y == 82&&currentTreeStep.z == 54) {
-                int a = 1;
-            }
         }
 
 
@@ -99,9 +96,11 @@ public class BaseTrunk {
 
         for (Vec3d loc : locations) {
             tree.put((int) loc.x, (int) loc.y, (int) loc.z, newDirection, newSlopeOfSlope, newWidth);
+            System.out.println("x:" + loc.x + " ,y:" + loc.y + " ,z:" + loc.z + " is not null");
         }
         tree.put(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
-
+        System.out.println("x:" + xFine + " ,y:" + yFine + " ,z:" + zFine + " is not null");
+        System.out.println("full step");
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
 

@@ -75,9 +75,9 @@ public class TreeArray {
             distance = 3;
         }
         distance = distance / 2;
-        int avgX = 0;
-        int avgY = 0;
-        int avgZ = 0;
+        double avgX = 0;
+        double avgY = 0;
+        double avgZ = 0;
         int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
@@ -121,9 +121,9 @@ public class TreeArray {
             distance = 3;
         }
         distance = distance / 2;
-        int avgX = 0;
-        int avgY = 0;
-        int avgZ = 0;
+        double avgX = 0;
+        double avgY = 0;
+        double avgZ = 0;
         int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {
@@ -167,7 +167,7 @@ public class TreeArray {
             distance = 3;
         }
         distance = distance / 2;
-        int avg = 0;
+        double avg = 0;
         int totalNotNull = 0;
         for (int i = -distance; i <= distance; i++) {
             for (int j = -distance; j <= distance; j++) {

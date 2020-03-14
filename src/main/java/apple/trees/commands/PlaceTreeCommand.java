@@ -3,6 +3,7 @@ package apple.trees.commands;
 import apple.trees.tree.refine.ResolutionDecreaser;
 import apple.trees.tree.trunk.creation.Trunk;
 import apple.trees.tree.trunk.data.TreeArray;
+import com.sun.javafx.geom.Vec3d;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,12 +20,14 @@ public class PlaceTreeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        TreeArray tree = Trunk.makeTrunkFromRaw(10, 100, 1, 3, 10, 1);
-        tree = ResolutionDecreaser.pixelify(tree, 3);
+        TreeArray tree = Trunk.makeTrunk(10, 100, 1, 3, 10, new Vec3d(0,3,0));
+        tree = ResolutionDecreaser.pixelify(tree, 1);
         System.out.println("made the trunk");
         Location loc = Bukkit.getPlayer(commandSender.getName()).getLocation();
         placeTree(tree, loc);
+        loc.getBlock().setType(Material.ACACIA_WOOD);
         return false;
+
     }
 
     private static void placeTree(TreeArray tree, Location location) {
