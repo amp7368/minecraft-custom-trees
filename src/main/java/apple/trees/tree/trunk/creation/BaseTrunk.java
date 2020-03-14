@@ -1,10 +1,11 @@
-package apple.trees.tree.trunk.utils;
+package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 
 public class BaseTrunk {
@@ -33,20 +34,31 @@ public class BaseTrunk {
      */
     public static TreeArray createBaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
-        lastTreeSteps.add(createBaseStart(tree, trunk_width, leanStart));
+        lastTreeSteps.add(createBaseStart(tree, new Vec3d(0, 1, 0), trunk_width, leanStart));
 
-        TreeStep lastTreeStep = lastTreeSteps.remove(0);
+        TreeStep lastTreeStep = lastTreeSteps.get(0);
+
+
+        // loop until all the ends are finished
+        treeStepLoop:
         for (int currentCompletedSteps = 0; currentCompletedSteps < maxCompletedSteps && lastTreeStep.y < trunk_height && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
+            lastTreeStep = lastTreeSteps.remove(0);
+            while (lastTreeStep == null) {
+                if (lastTreeSteps.isEmpty())
+                    break treeStepLoop;
+                lastTreeStep = lastTreeSteps.remove(0);
+            }
+            //todo branch off
             TreeStep currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
             lastTreeSteps.add(currentTreeStep);
         }
-
 
         return tree;
     }
 
     /**
      * get the next tree step from what was given about the last tree step
+     * add any steps to the tree
      *
      * @param tree           the entire tree and all the steps within it
      * @param lastTreeStep   the tree step that was last created
@@ -55,10 +67,9 @@ public class BaseTrunk {
      * @return the new main step in the tree
      */
     private static TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, double leanMagnitude, double leanLikelihood) {
-        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y);
-        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
-        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
-
+        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y, 3);
+        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
 
         // get the location of the newStep
 
@@ -68,7 +79,9 @@ public class BaseTrunk {
         double zFine = lastTreeStep.z + lastDirection.z;
 
         // keep going in that direction until you make it to a new square
-        while ((int) xFine == lastTreeStep.x && (int) yFine == lastTreeStep.y && (int) zFine == lastTreeStep.z) {
+        for (int i = 0; (int) xFine == lastTreeStep.x && (int) yFine == lastTreeStep.y && (int) zFine == lastTreeStep.z; i++) {
+            if (i == 100)
+                return null;
             xFine += lastTreeStep.x + lastDirection.x;
             yFine += lastTreeStep.y + lastDirection.y;
             zFine += lastTreeStep.z + lastDirection.z;
@@ -79,6 +92,7 @@ public class BaseTrunk {
 
         // make a list of the locations for the next full step
         ArrayList<Vec3d> locations = getNearbySquares(xBroad, yBroad, zBroad, xFine, yFine, zFine);
+        locations.addAll(getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z)));
 
         // get the direction of the newStep
         double newDirectionX = lastDirection.x + lastSlopeOfSlope.x;
@@ -95,9 +109,64 @@ public class BaseTrunk {
         for (Vec3d loc : locations) {
             tree.put((int) loc.x, (int) loc.y, (int) loc.z, newDirection, newSlopeOfSlope, newWidth);
         }
-
+        tree.put(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
+        System.out.println("x:" + xBroad + " ,y:" + yBroad + " ,z:" + zBroad + " is not null");
+        System.out.println("slope: " + "x:" + newSlopeOfSlope.x + " ,y:" + newSlopeOfSlope.y + " ,z:" + newSlopeOfSlope.z);
+        System.out.println("direction: " + "x:" + newDirection.x + " ,y:" + newDirection.y + " ,z:" + newDirection.z);
+        System.out.println("full step\n");
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
+
+    private static ArrayList<Vec3d> getTrailingSquares(Vec3d lastDirection, Vec3d lastTreeStepLocation) {
+        ArrayList<Vec3d> locations = new ArrayList<>();
+
+        // make the unit vector of lastDirection
+        Vec3d unitLastDirection = new Vec3d();
+        double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
+        unitLastDirection.x = lastDirection.x / magnitude;
+        unitLastDirection.y = lastDirection.y / magnitude;
+        unitLastDirection.z = lastDirection.z / magnitude;
+
+
+        double maxX = lastDirection.x + lastTreeStepLocation.x;
+        double maxY = lastDirection.y + lastTreeStepLocation.y;
+        double maxZ = lastDirection.z + lastTreeStepLocation.z;
+
+        // keep going in that direction until all the inbetweens are filled
+        for (double x = lastTreeStepLocation.x; x < maxX; x += unitLastDirection.x) {
+            for (double y = lastTreeStepLocation.y; y < maxY; y += unitLastDirection.y) {
+                for (double z = lastTreeStepLocation.z; z < maxZ; z += unitLastDirection.z) {
+                    boolean addMe = true;
+                    for (Vec3d location : locations) {
+                        if (location.x == x && location.y == y && location.z == z) {
+                            addMe = false;
+                            break;
+                        }
+                    }
+                    if (addMe) {
+                        locations.add(new Vec3d(x, y, z));
+
+
+                        //todo maybe get rid of this vvv
+                        ArrayList<Vec3d> subLocations = getNearbySquares((int) x, (int) y, (int) z, x, y, z);
+                        for (Vec3d subLocation : subLocations) {
+                            addMe = true;
+                            for (Vec3d location : locations) {
+                                if (location.x == x && location.y == y && location.z == z) {
+                                    addMe = false;
+                                    break;
+                                }
+                            }
+                            if (addMe)
+                                locations.add(subLocation);
+                        }
+                    }
+                }
+            }
+        }
+        return locations;
+    }
+
 
     /**
      * gets all the squares nearby to the location sizeof (0, 1, 2, or 3) returned
@@ -115,8 +184,8 @@ public class BaseTrunk {
 
         // see if it is close to a boundary
         double xDecimal = xFine - xBroad;
-        double yDecimal = xFine - yBroad;
-        double zDecimal = xFine - zBroad;
+        double yDecimal = yFine - yBroad;
+        double zDecimal = zFine - zBroad;
         if (xDecimal < .25) {
             locations.add(new Vec3d(xBroad - 1, yBroad, zBroad));
         } else if (xDecimal > .75) {
@@ -137,7 +206,7 @@ public class BaseTrunk {
 
     /**
      * todo is this a good estimate?
-     * good to have decay rate about 7.5 (bigger decay means bigger result
+     * good to have decay rate about 1/7.5 (bigger decay means bigger result
      *
      * @param lastWidth what the width used to be
      * @param decayRate what the decay rate is
@@ -150,7 +219,12 @@ public class BaseTrunk {
                         / Math.pow(BELL_CURVE_A, 2)));
     }
 
-
+    /**
+     * @param lastSlopeOfSlope
+     * @param leanMagnitude
+     * @param leanLikelihood
+     * @return
+     */
     public static Vec3d getRandomChangeSlopeOfSlope(Vec3d lastSlopeOfSlope, double leanMagnitude, double leanLikelihood) {
         // todo use leanLikelihood
         // get the magnitude of change of slope
@@ -161,26 +235,46 @@ public class BaseTrunk {
         double r1 = random.nextDouble();
         double r2 = random.nextDouble();
         double r3 = random.nextDouble();
-        newSlopeOfSlope.x += (r1 / newLeanMagnitude * 3);
-        newSlopeOfSlope.y += (r2 / newLeanMagnitude * 3);
-        newSlopeOfSlope.z += (r3 / newLeanMagnitude * 3);
+        double sum = r1 + r2 + r3;
+
+        double addX = (r1 / sum * 3 * newLeanMagnitude);
+        double addY = (r2 / sum * 3 * newLeanMagnitude);
+        double addZ = (r3 / sum * 3 * newLeanMagnitude);
+
+        //negitify some of the numbers
+        if (random.nextDouble() < .5)
+            addX = -addX;
+        if (random.nextDouble() < .5)
+            addY = -addY;
+        if (random.nextDouble() < .5)
+            addZ = -addZ;
+
+        // add the changes to the old vector
+        newSlopeOfSlope.x += addX;
+        newSlopeOfSlope.y += addY;
+        newSlopeOfSlope.z += addZ;
+
 
         return newSlopeOfSlope;
     }
 
-    private static TreeStep createBaseStart(TreeArray tree, int trunk_width, Vec3d leanStart) {
+
+    private static TreeStep createBaseStart(TreeArray tree, Vec3d direction, int trunk_width, Vec3d leanStart) {
         int centerX = tree.sizeX() / 2;
+        int centerY = 0;
         int centerZ = tree.sizeZ() / 2;
-        int centerY = tree.sizeY() / 2;
 
 
         int trunk_width_half = trunk_width / 2;
-        for (int xi = -(trunk_width - 1) / 2; xi < trunk_width_half; xi++) {
-            for (int zi = -(trunk_width - 1) / 2; zi < trunk_width_half; zi++) {
-                tree.put(centerX, centerZ, centerY, leanStart, new Vec3d(0, 0, 0), trunk_width);
+        for (int xi = -trunk_width_half; xi < trunk_width_half; xi++) {
+            for (int zi = -trunk_width_half; zi < trunk_width_half; zi++) {
+                if (xi == 0 && zi == 0) {
+                    int a = 3;
+                }
+                tree.put(centerX + xi, centerY, centerZ + zi, leanStart, direction, trunk_width);
             }
         }
-        return tree.get(centerX, centerZ, centerY);
+        return tree.get(centerX, centerY, centerZ);
     }
 
 }
