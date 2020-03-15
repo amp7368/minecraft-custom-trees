@@ -77,9 +77,9 @@ public class BaseTrunk {
         int branchesToBuild = 2;
 
         ArrayList<TreeStep> branchSteps = new ArrayList<>();
-        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y, 3);
-        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
-        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+        Vec3d lastDirection = lastTreeStep.direction;
+        Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
+        double lastWidth = lastTreeStep.width;
 
         // make the unit vector of lastDirection
         Vec3d unitLastDirection6 = new Vec3d();
@@ -130,9 +130,10 @@ public class BaseTrunk {
      * @return the new main step in the tree
      */
     private static TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, double leanMagnitude, double leanLikelihood) {
-        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y, 3);
-        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
-        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+        Vec3d lastDirection = lastTreeStep.direction;
+        Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
+        double lastWidth = lastTreeStep.width;
+
 
         // get the location of the newStep
 
