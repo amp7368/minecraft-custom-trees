@@ -4,7 +4,12 @@ import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
 import net.minecraft.server.v1_15_R1.Quaternion;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -18,8 +23,10 @@ public class BaseTrunk {
     private static final double BRANCHING_CHANCE = .2;
     private static Random random;
     private static final int maxCompletedSteps = 1000;
+    private static JavaPlugin plugin;
 
-    public static void initialize() {
+    public static void initialize(JavaPlugin pl) {
+        plugin = pl;
         random = new Random();
     }
 
@@ -91,19 +98,23 @@ public class BaseTrunk {
         unitLastDirection6.y = lastDirection.y / magnitude * 6;
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
+        //todo remove me xxxxxxxxxxxxxxxxxxxxxxxxxx
+        File file = new File(plugin.getDataFolder() + File.separator + "theta" + File.separator + "theta.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        double xTheta = config.getDouble("xTheta");
+        double yTheta = config.getDouble("yTheta");
+        double zTheta = config.getDouble("zTheta");
+        //todo remove me xxxxxxxxxxxxxxxxxxxxxxxxxx
+
         Vec3d newDirection;
         double x, y, z;
-
-        newDirection = new Vec3d();
-        newDirection.x = unitLastDirection6.x + .25;
-        newDirection.y = unitLastDirection6.y;
-        newDirection.z = unitLastDirection6.z + .25;
+        newDirection = VectorRotation.rotate(xTheta, yTheta, zTheta, unitLastDirection6);
 
         x = lastTreeStep.x + newDirection.x;
         y = lastTreeStep.y + newDirection.y;
         z = lastTreeStep.z + newDirection.z;
 
-        branchSteps.add(tree.put(x,y,z,newDirection,new Vec3d(0,0,0),lastWidth));
+        branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
 
         newDirection = new Vec3d();
         newDirection.x = unitLastDirection6.x - .25;
@@ -114,7 +125,7 @@ public class BaseTrunk {
         y = lastTreeStep.y + newDirection.y;
         z = lastTreeStep.z + newDirection.z;
 
-        branchSteps.add(tree.put(x,y,z,newDirection,new Vec3d(0,0,0),lastWidth));
+        branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
 
         return branchSteps;
 
@@ -135,7 +146,7 @@ public class BaseTrunk {
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
-        
+
         // get the location of the newStep
 
         // get the immediate location

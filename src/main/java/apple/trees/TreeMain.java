@@ -7,7 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TreeMain extends JavaPlugin {
     @Override
     public void onEnable() {
-        BaseTrunk.initialize();
+        BaseTrunk.initialize(this);
         new PlaceTreeCommand(this);
     }
 }
