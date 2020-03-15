@@ -21,17 +21,16 @@ public class PlaceTreeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         TreeArray tree = Trunk.makeTrunk(10, 100, 1, 3, 10, new Vec3d(0,3,0));
-        tree = ResolutionDecreaser.pixelify(tree, 3);
-        System.out.println("made the trunk");
+//        tree = ResolutionDecreaser.pixelify(tree, 3);
         Location loc = Bukkit.getPlayer(commandSender.getName()).getLocation();
         placeTree(tree, loc);
-        loc.getBlock().setType(Material.ACACIA_WOOD);
+        Bukkit.getServer().broadcastMessage("made a tree!");
         return false;
 
     }
 
     private static void placeTree(TreeArray tree, Location location) {
-        //todo
+        //todo optimize
         for (int x = location.getBlockX(), xorig = 0; xorig < tree.sizeX(); x++, xorig++) {
             for (int y = location.getBlockY(), yorig = 0; yorig < tree.sizeY(); y++, yorig++) {
                 for (int z = location.getBlockZ(), zorig = 0; zorig < tree.sizeZ(); z++, zorig++) {

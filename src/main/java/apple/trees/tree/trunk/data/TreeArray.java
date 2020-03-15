@@ -2,6 +2,8 @@ package apple.trees.tree.trunk.data;
 
 import com.sun.javafx.geom.Vec3d;
 
+import java.util.ArrayList;
+
 public class TreeArray {
     private TreeStep[][][] tree;
 
@@ -38,11 +40,22 @@ public class TreeArray {
      * @param slopeOfSlope the current acceleration
      * @return the newly created step
      */
-    public TreeStep put(int x, int y, int z, Vec3d direction, Vec3d slopeOfSlope, double width) {
+    public TreeStep put(double x, double y, double z, Vec3d direction, Vec3d slopeOfSlope, double width) {
+        //todo optimize (int) x
         if (x < sizeX() && y < sizeY() && z < sizeZ() && x >= 0 && y >= 0 && z >= 0) {
-            TreeStep step = new TreeStep(x, y, z, direction, slopeOfSlope, width);
-            tree[x][y][z] = step;
-            return step;
+            if (x != (int) x && y != (int) y && z != (int) z) {
+                ArrayList<Vec3d> locations = getNearbySquares((int) x, (int) y, (int) z, x, y, z);
+                for (Vec3d loc : locations) {
+                    tree[(int) x][(int) y][(int) z] = new TreeStep((int) loc.x, (int) loc.y, (int) loc.z, direction, slopeOfSlope, width);
+                }
+            }
+            if (tree[(int) x][(int) y][(int) z] == null) {
+                TreeStep step = new TreeStep((int) x, (int) y, (int) z, direction, slopeOfSlope, width);
+                tree[(int) x][(int) y][(int) z] = step;
+                return step;
+            } else {
+                return tree[(int) x][(int) y][(int) z];
+            }
         }
         return null;
     }
@@ -221,5 +234,41 @@ public class TreeArray {
             return 0;
         }
         return ((double) trues) / totals;
+    }
+
+    /**
+     * gets all the squares nearby to the location sizeof (0, 1, 2, or 3) returned
+     *
+     * @param xBroad the x location
+     * @param yBroad the y location
+     * @param zBroad the z location
+     * @param xFine  the exact x location
+     * @param yFine  the exact y location
+     * @param zFine  the exact z location
+     * @return all the x,y,z's that are close to the xFine,yFine,zFine
+     */
+    private static ArrayList<Vec3d> getNearbySquares(int xBroad, int yBroad, int zBroad, double xFine, double yFine, double zFine) {
+        ArrayList<Vec3d> locations = new ArrayList<>(2);
+
+        // see if it is close to a boundary
+        double xDecimal = xFine - xBroad;
+        double yDecimal = yFine - yBroad;
+        double zDecimal = zFine - zBroad;
+        if (xDecimal < .25) {
+            locations.add(new Vec3d(xBroad - 1, yBroad, zBroad));
+        } else if (xDecimal > .75) {
+            locations.add(new Vec3d(xBroad + 1, yBroad, zBroad));
+        }
+        if (yDecimal < .25) {
+            locations.add(new Vec3d(xBroad, yBroad - 1, zBroad));
+        } else if (yDecimal > .75) {
+            locations.add(new Vec3d(xBroad, yBroad + 1, zBroad));
+        }
+        if (zDecimal < .25) {
+            locations.add(new Vec3d(xBroad, yBroad - 1, zBroad));
+        } else if (zDecimal > .75) {
+            locations.add(new Vec3d(xBroad, yBroad + 1, zBroad));
+        }
+        return locations;
     }
 }

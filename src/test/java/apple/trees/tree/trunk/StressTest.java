@@ -13,6 +13,7 @@ public class StressTest {
 //        BaseTrunkTest.baseTrunkTest();
         TreeArray tree = Trunk.makeTrunk(10, 100, 3, 3, 10, new Vec3d(0, 1, 0));
         tree = ResolutionDecreaser.pixelify(tree, 3);
+        int a =3;
     }
 
     private static void treeIsNull(TreeArray tree) {
