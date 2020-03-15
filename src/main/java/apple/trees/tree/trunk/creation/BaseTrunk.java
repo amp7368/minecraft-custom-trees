@@ -3,6 +3,7 @@ package apple.trees.tree.trunk.creation;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
+import net.minecraft.server.v1_15_R1.Quaternion;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,7 +135,7 @@ public class BaseTrunk {
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
-
+        
         // get the location of the newStep
 
         // get the immediate location
