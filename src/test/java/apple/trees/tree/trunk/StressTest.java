@@ -15,16 +15,4 @@ public class StressTest {
         tree = ResolutionDecreaser.pixelify(tree, 3);
         int a =3;
     }
-
-    private static void treeIsNull(TreeArray tree) {
-        for (int x = 0; x < tree.sizeX(); x++) {
-            for (int y = 0; y < tree.sizeY(); y++) {
-                for (int z = 0; z < tree.sizeZ(); z++) {
-                    if (tree.get(x, y, z) != null) {
-                        System.out.println("x:" + x + " ,y:" + y + " ,z:" + z + " is not null");
-                    }
-                }
-            }
-        }
-    }
 }

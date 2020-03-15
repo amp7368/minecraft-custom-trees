@@ -35,7 +35,6 @@ public class ResolutionDecreaser {
                         Vec3d newSlopeOfSlope = tree.getAvgSlopeOfSlope(xOld, yOld, zOld, intRatio);
                         double newWidth = tree.getAvgWidth(xOld, yOld, zOld, intRatio);
                         newTree.put(x, y, z, newDirection, newSlopeOfSlope, newWidth);
-                        System.out.println("x:" + x + ", y:" + y + ",z:" + z);
                     }
                 }
             }

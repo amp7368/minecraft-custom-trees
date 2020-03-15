@@ -14,6 +14,7 @@ public class BaseTrunk {
     private static final double BELL_CURVE_A = .14;
     private static final double BELL_CURVE_B = .5;
     private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
+    private static final double BRANCHING_CHANCE = .2;
     private static Random random;
     private static final int maxCompletedSteps = 1000;
 
@@ -48,12 +49,74 @@ public class BaseTrunk {
             }
             if (lastTreeStep.y > trunk_height)
                 break;
-            //todo branch off
-            TreeStep currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
-            lastTreeSteps.add(currentTreeStep);
+            TreeStep currentTreeStep;
+            if (random.nextDouble() < BRANCHING_CHANCE) {
+                System.out.println("Branched!");
+                lastTreeSteps.addAll(getBranches(tree, lastTreeStep, 30, .5, 4));
+            } else {
+                currentTreeStep = getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood);
+                lastTreeSteps.add(currentTreeStep);
+            }
         }
 
         return tree;
+    }
+
+    /**
+     * make a branch session instead of continuing the tree
+     *
+     * @param tree               the entire tree and all the steps within it
+     * @param lastTreeStep       the tree step that was last created
+     * @param branchAngle        (Degrees) the angle to branch off at
+     * @param branchStealing     how much branches steal from the original
+     * @param branchGroupingSize how many branches are typical in a group
+     * @return all the last created steps for the branch session
+     */
+    private static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize) {
+        //todo use branch grouping size with normal distribution with min of 2
+        int branchesToBuild = 2;
+
+        ArrayList<TreeStep> branchSteps = new ArrayList<>();
+        Vec3d lastDirection = tree.getAvgDirection(lastTreeStep.x, lastTreeStep.z, lastTreeStep.y, 3);
+        Vec3d lastSlopeOfSlope = tree.getAvgSlopeOfSlope(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+        double lastWidth = tree.getAvgWidth(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z, 3);
+
+        // make the unit vector of lastDirection
+        Vec3d unitLastDirection6 = new Vec3d();
+        double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
+        if (magnitude == 0)
+            return branchSteps;
+        unitLastDirection6.x = lastDirection.x / magnitude * 6;
+        unitLastDirection6.y = lastDirection.y / magnitude * 6;
+        unitLastDirection6.z = lastDirection.z / magnitude * 6;
+
+        Vec3d newDirection;
+        double x, y, z;
+
+        newDirection = new Vec3d();
+        newDirection.x = unitLastDirection6.x + .25;
+        newDirection.y = unitLastDirection6.y;
+        newDirection.z = unitLastDirection6.z + .25;
+
+        x = lastTreeStep.x + newDirection.x;
+        y = lastTreeStep.y + newDirection.y;
+        z = lastTreeStep.z + newDirection.z;
+
+        branchSteps.add(tree.put(x,y,z,newDirection,new Vec3d(0,0,0),lastWidth));
+
+        newDirection = new Vec3d();
+        newDirection.x = unitLastDirection6.x - .25;
+        newDirection.y = unitLastDirection6.y;
+        newDirection.z = unitLastDirection6.z - .25;
+
+        x = lastTreeStep.x + newDirection.x;
+        y = lastTreeStep.y + newDirection.y;
+        z = lastTreeStep.z + newDirection.z;
+
+        branchSteps.add(tree.put(x,y,z,newDirection,new Vec3d(0,0,0),lastWidth));
+
+        return branchSteps;
+
     }
 
     /**
@@ -90,9 +153,6 @@ public class BaseTrunk {
         int yBroad = (int) yFine;
         int zBroad = (int) zFine;
 
-        // make a list of the locations for the next full step
-        ArrayList<Vec3d> locations = getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));
-
         // get the direction of the newStep
         double newDirectionX = lastDirection.x + lastSlopeOfSlope.x;
         double newDirectionY = lastDirection.y + lastSlopeOfSlope.y;
@@ -105,15 +165,13 @@ public class BaseTrunk {
         // get the width of the newStep
         double newWidth = getRandomChangeWidth(lastWidth, DECAY_RATE);
 
+        // make a list of the locations for the next full step
+        ArrayList<Vec3d> locations = getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));
         // put all the trailings in the tree
         for (Vec3d loc : locations) {
             tree.put(loc.x, loc.y, loc.z, newDirection, newSlopeOfSlope, newWidth);
         }
         tree.put(xFine, yFine, zFine, newDirection, newSlopeOfSlope, newWidth);
-        System.out.println("x:" + xBroad + " ,y:" + yBroad + " ,z:" + zBroad + " is not null");
-        System.out.println("slope: " + "x:" + newSlopeOfSlope.x + " ,y:" + newSlopeOfSlope.y + " ,z:" + newSlopeOfSlope.z);
-        System.out.println("direction: " + "x:" + newDirection.x + " ,y:" + newDirection.y + " ,z:" + newDirection.z);
-        System.out.println("full step\n");
 
         return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
     }
