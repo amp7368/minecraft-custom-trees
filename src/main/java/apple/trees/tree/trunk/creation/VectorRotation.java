@@ -10,6 +10,11 @@ public class VectorRotation {
         // convert the Vec3d to a Vec3f to do dot products later
         Vec3f vector = new Vec3f((float) vectorRaw.x, (float) vectorRaw.y, (float) vectorRaw.z);
 
+        // convert the thetas to radians
+        xTheta = Math.toRadians(xTheta);
+        yTheta = Math.toRadians(yTheta);
+        zTheta = Math.toRadians(zTheta);
+
         Matrix3f matrix = new Matrix3f();
 
         //refresher m01 is row 0, col 1

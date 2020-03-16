@@ -8,6 +8,7 @@ public class TreeMain extends JavaPlugin {
     @Override
     public void onEnable() {
         BaseTrunk.initialize(this);
+
         new PlaceTreeCommand(this);
     }
 }
