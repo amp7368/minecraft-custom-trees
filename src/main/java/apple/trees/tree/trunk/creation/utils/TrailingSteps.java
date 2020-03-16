@@ -48,7 +48,6 @@ public class TrailingSteps {
                 }
             }
             if (addMe) {
-                System.out.println("x:" + (int) x + " ,y:" + (int) y + " ,z:" + (int) z + " added ");
                 locations.add(new Vec3d(x, y, z));
             }
         }

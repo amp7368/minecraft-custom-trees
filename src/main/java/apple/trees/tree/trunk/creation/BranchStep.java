@@ -1,5 +1,6 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.tree.trunk.creation.utils.GetRotations;
 import apple.trees.tree.trunk.creation.utils.TrailingSteps;
 import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import apple.trees.tree.trunk.data.TreeArray;
@@ -28,7 +29,7 @@ public class BranchStep {
      * @param branchGroupingSize how many branches are typical in a group
      * @return all the last created steps for the branch session
      */
-    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize,int branchesMean) {
+    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize, int branchesMean) {
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 
@@ -46,36 +47,41 @@ public class BranchStep {
         unitLastDirection6.y = lastDirection.y / magnitude * 6;
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
+        Vec3d lastStepLocation  = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
-        // make branchAngle be yTheta
-        double xTheta = random.nextDouble() * 360;
-        // todo make this a normal distribution curve
-        double yTheta = branchAngle;
-        double zTheta = random.nextDouble() * 360;
-
-        Vec3d newDirection;
+        // get all the different rotations
+        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchesToBuild);
         double x, y, z;
-        newDirection = VectorRotation.rotate(xTheta, yTheta, zTheta, unitLastDirection6);
+        // go through each rotation and make a branch for it
+        for (Vec3d rotation:rotationAmounts) {
+            Vec3d newDirection;
+            newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, unitLastDirection6);
 
-        x = lastTreeStep.x + newDirection.x;
-        y = lastTreeStep.y + newDirection.y;
-        z = lastTreeStep.z + newDirection.z;
+            x = lastTreeStep.x + newDirection.x;
+            y = lastTreeStep.y + newDirection.y;
+            z = lastTreeStep.z + newDirection.z;
 
-        //todo maybe (0,0,0) should be somefin else
-        branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
+            //todo maybe (0,0,0) should be somefin else
+            branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
+
+            // make a list of the locations for the next full step
+            ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(newDirection, lastStepLocation);
+            // put all the trailings in the tree
+            for (Vec3d loc : locations) {
+                tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, lastWidth);
+            }
+        }
+        x = lastTreeStep.x + lastDirection.x;
+        y = lastTreeStep.y + lastDirection.y;
+        z = lastTreeStep.z + lastDirection.z;
+
         branchSteps.add(tree.put(x, y, z, lastDirection, lastSlopeOfSlope, lastWidth));
 
         // make a list of the locations for the next full step
-        ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));
+        ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(lastDirection, lastStepLocation);
         // put all the trailings in the tree
         for (Vec3d loc : locations) {
-            tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, lastWidth);
-        }
-        // make a list of the locations for the next full step
-        locations = TrailingSteps.getTrailingSquares(newDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));
-        // put all the trailings in the tree
-        for (Vec3d loc : locations) {
-            tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, lastWidth);
+            tree.put(loc.x, loc.y, loc.z, lastDirection, lastSlopeOfSlope, lastWidth);
         }
 
         return branchSteps;

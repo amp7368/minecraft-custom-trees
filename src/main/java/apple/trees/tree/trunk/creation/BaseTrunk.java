@@ -1,5 +1,6 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.tree.trunk.creation.utils.GetRotations;
 import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
@@ -20,7 +21,7 @@ public class BaseTrunk {
         random = new Random();
         BranchStep.initialize(pl, random);
         RandomChange.initialize(pl, random);
-
+        GetRotations.initialize(pl, random);
     }
 
     /**
