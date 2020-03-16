@@ -47,13 +47,13 @@ public class BranchStep {
         unitLastDirection6.y = lastDirection.y / magnitude * 6;
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
-        Vec3d lastStepLocation  = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
+        Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
-        // get all the different rotations
-        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchesToBuild);
+        // get all the different rotations //todo change arrayList to an arraylist of weights
+        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchesToBuild, new ArrayList<>());
         double x, y, z;
         // go through each rotation and make a branch for it
-        for (Vec3d rotation:rotationAmounts) {
+        for (Vec3d rotation : rotationAmounts) {
             Vec3d newDirection;
             newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, unitLastDirection6);
 
@@ -70,18 +70,6 @@ public class BranchStep {
             for (Vec3d loc : locations) {
                 tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, lastWidth);
             }
-        }
-        x = lastTreeStep.x + lastDirection.x;
-        y = lastTreeStep.y + lastDirection.y;
-        z = lastTreeStep.z + lastDirection.z;
-
-        branchSteps.add(tree.put(x, y, z, lastDirection, lastSlopeOfSlope, lastWidth));
-
-        // make a list of the locations for the next full step
-        ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(lastDirection, lastStepLocation);
-        // put all the trailings in the tree
-        for (Vec3d loc : locations) {
-            tree.put(loc.x, loc.y, loc.z, lastDirection, lastSlopeOfSlope, lastWidth);
         }
 
         return branchSteps;
