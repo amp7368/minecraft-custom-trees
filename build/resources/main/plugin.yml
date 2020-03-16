@@ -1,0 +1,9 @@
+name: AppleCustomTrees
+version: 1.0
+api-version: 1.15
+author: Apple
+main: apple.trees.TreeMain
+description: Rewards players that build with points
+commands:
+  place_tree:
+    description: creates a tre
