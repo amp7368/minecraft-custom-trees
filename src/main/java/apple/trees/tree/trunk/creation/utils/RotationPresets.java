@@ -13,6 +13,10 @@ public class RotationPresets {
         random = rand;
     }
 
+    public static void initialize(Random rand) {
+        random = rand;
+    }
+
     protected static ArrayList<Vec3d> branches2FromDomain() {
         ArrayList<Vec3d> polars = new ArrayList<>();
         double xr = random.nextDouble();
@@ -20,25 +24,25 @@ public class RotationPresets {
         double zr = random.nextDouble();
         double x1, x2, y1, y2, z1, z2;
         if (xr < .5) {
-            x1 = 0;
+            x1 = -360;
             x2 = 360;
         } else {
             x1 = 360;
-            x2 = 0;
+            x2 = -360;
         }
         if (yr < .5) {
-            y1 = 0;
+            y1 = -360;
             y2 = 360;
         } else {
             y1 = 360;
-            y2 = 0;
+            y2 = -360;
         }
         if (zr < .5) {
-            z1 = 0;
+            z1 = -360;
             z2 = 360;
         } else {
             z1 = 360;
-            z2 = 0;
+            z2 = -360;
         }
         polars.add(new Vec3d(x1, y1, z1));
         polars.add(new Vec3d(x2, y2, z2));
@@ -48,6 +52,7 @@ public class RotationPresets {
     protected static ArrayList<Vec3d> branches3FromDomain() {
         ArrayList<Vec3d> polars = new ArrayList<>();
         polars.add(new Vec3d(0, 0, 0));
+        polars.add(new Vec3d(-360, -360, -360));
         polars.add(new Vec3d(360, 360, 360));
         return polars;
     }

@@ -23,7 +23,7 @@ public class BaseTrunk {
         BranchStep.initialize(pl, random);
         RandomChange.initialize(pl, random);
         GetRotations.initialize(pl, random);
-        RotationPresets.initialize(pl,random);
+        RotationPresets.initialize(pl, random);
     }
 
     /**
@@ -57,7 +57,7 @@ public class BaseTrunk {
                 continue;
             TreeStep currentTreeStep;
             if (random.nextDouble() < BRANCHING_CHANCE) {
-                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 30, .5, 4, 2));
+                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, 2));
             } else {
                 currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, DECAY_RATE);
                 lastTreeSteps.add(currentTreeStep);

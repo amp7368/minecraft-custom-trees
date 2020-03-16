@@ -22,14 +22,14 @@ public class BranchStep {
     /**
      * make a branch session instead of continuing the tree
      *
-     * @param tree               the entire tree and all the steps within it
-     * @param lastTreeStep       the tree step that was last created
-     * @param branchAngle        (Degrees) the angle to branch off at
-     * @param branchStealing     how much branches steal from the original
-     * @param branchGroupingSize how many branches are typical in a group
+     * @param tree           the entire tree and all the steps within it
+     * @param lastTreeStep   the tree step that was last created
+     * @param branchAngle    (Degrees) the angle to branch off at
+     * @param branchStealing how much branches steal from the original
+     * @param branchesMean   how many branches are typically in a group
      * @return all the last created steps for the branch session
      */
-    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize, int branchesMean) {
+    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchesMean) {
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 

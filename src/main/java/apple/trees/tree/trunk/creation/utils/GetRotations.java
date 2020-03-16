@@ -16,22 +16,35 @@ public class GetRotations {
         random = rand;
     }
 
+    public static void initialize(Random rand) {
+        random = rand;
+    }
+
     public static Collection<Vec3d> rotationFullFromDomain(double branchAngle, int branchesToBuild, ArrayList<Double> branchWeights) {
         ArrayList<Vec3d> rotations = rotationBaseFromDomain(branchesToBuild);
         reduceRotations(rotations, branchAngle);
+        printify(rotations);
         return rotations;
 
     }
 
+    private static void printify(ArrayList<Vec3d> rotations) {
+        for (Vec3d vec : rotations) {
+            printVec(vec);
+        }
+    }
+
+    private static void printVec(Vec3d vec) {
+        System.out.println(String.format("x:%f,y:%f,z:%f", vec.x, vec.y, vec.z));
+    }
+
     private static void reduceRotations(ArrayList<Vec3d> rotations, double branchAngle) {
-        double divisor = 360 / branchAngle/2;
-        double negate = branchAngle;
+        double divisor = 360 / branchAngle;
         // make this 0 a random number
-        Vec3d base = rotations.get(0);
         for (Vec3d rotation : rotations) {
-            rotation.x = (rotation.x - base.x) / divisor-negate;
-            rotation.y = (rotation.y - base.y) / divisor-negate;
-            rotation.z = (rotation.z - base.z) / divisor-negate;
+            rotation.x = (rotation.x) / divisor;
+            rotation.y = (rotation.y ) / divisor;
+            rotation.z = (rotation.z ) / divisor;
         }
     }
 
@@ -39,8 +52,11 @@ public class GetRotations {
         ArrayList<Vec3d> rotations;
         if (branchesToBuild == 2) {
             rotations = RotationPresets.branches2FromDomain();
+        } else if (branchesToBuild == 3) {
+            rotations = RotationPresets.branches3FromDomain();
         } else {
             rotations = new ArrayList<>();
+
         }
         return rotations;
     }
