@@ -12,7 +12,7 @@ public class RandomChange {
     private static Random random;
 
     public static void initialize(JavaPlugin pl, Random rand) {
-        RandomChange.random = rand;
+        random = rand;
     }
 
     /**

@@ -24,8 +24,8 @@ public class GetRotations {
     }
 
     private static void reduceRotations(ArrayList<Vec3d> rotations, double branchAngle) {
-        double divisor = 360 / branchAngle;
-        double negate = branchAngle/2;
+        double divisor = 360 / branchAngle/2;
+        double negate = branchAngle;
         // make this 0 a random number
         Vec3d base = rotations.get(0);
         for (Vec3d rotation : rotations) {

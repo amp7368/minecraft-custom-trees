@@ -2,6 +2,7 @@ package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.creation.utils.GetRotations;
 import apple.trees.tree.trunk.creation.utils.RandomChange;
+import apple.trees.tree.trunk.creation.utils.RotationPresets;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
@@ -22,6 +23,7 @@ public class BaseTrunk {
         BranchStep.initialize(pl, random);
         RandomChange.initialize(pl, random);
         GetRotations.initialize(pl, random);
+        RotationPresets.initialize(pl,random);
     }
 
     /**
@@ -55,7 +57,6 @@ public class BaseTrunk {
                 continue;
             TreeStep currentTreeStep;
             if (random.nextDouble() < BRANCHING_CHANCE) {
-                System.out.println("Branched!");
                 lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 30, .5, 4, 2));
             } else {
                 currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, DECAY_RATE);
