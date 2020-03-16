@@ -1,4 +1,4 @@
-package apple.trees.tree.trunk.creation;
+package apple.trees.tree.trunk.creation.utils;
 
 import com.sun.javafx.geom.Matrix3f;
 import com.sun.javafx.geom.Vec3d;

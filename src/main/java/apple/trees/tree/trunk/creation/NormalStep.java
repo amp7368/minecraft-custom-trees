@@ -1,5 +1,7 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.tree.trunk.creation.utils.RandomChange;
+import apple.trees.tree.trunk.creation.utils.TrailingSteps;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;

@@ -1,4 +1,4 @@
-package apple.trees.tree.trunk.creation;
+package apple.trees.tree.trunk.creation.utils;
 
 import com.sun.javafx.geom.Vec3d;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +24,6 @@ public class RandomChange {
      * @return a number according to a bell curve with the height of about decay rate
      */
     public static double getRandomChangeWidth(double lastWidth, double decayRate) {
-        //todo finish formula vvv
         return lastWidth * decayRate / 2 * BELL_CURVE_LEFT * Math.pow(
                 Math.E, -0.5 * (Math.pow(random.nextDouble() - BELL_CURVE_B, 2)
                         / Math.pow(BELL_CURVE_A, 2)));
@@ -42,6 +41,7 @@ public class RandomChange {
         double r3 = random.nextDouble();
         double sum = r1 + r2 + r3;
 
+        // 3 because there are 3 r's
         double addX = (r1 / sum * 3 * newLeanMagnitude);
         double addY = (r2 / sum * 3 * newLeanMagnitude);
         double addZ = (r3 / sum * 3 * newLeanMagnitude);

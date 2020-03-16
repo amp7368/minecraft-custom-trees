@@ -1,5 +1,7 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.tree.trunk.creation.utils.TrailingSteps;
+import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
@@ -9,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
-public class Branch {
+public class BranchStep {
     private static Random random;
 
     public static void initialize(JavaPlugin pl, Random rand) {
-        Branch.random = rand;
+        BranchStep.random = rand;
     }
 
     /**
@@ -26,9 +28,9 @@ public class Branch {
      * @param branchGroupingSize how many branches are typical in a group
      * @return all the last created steps for the branch session
      */
-    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize) {
+    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchGroupingSize,int branchesMean) {
         //todo use branch grouping size with normal distribution with min of 2
-        int branchesToBuild = 2;
+        int branchesToBuild = branchesMean;
 
         ArrayList<TreeStep> branchSteps = new ArrayList<>();
         Vec3d lastDirection = lastTreeStep.direction;
@@ -40,7 +42,7 @@ public class Branch {
         double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
         if (magnitude == 0)
             return branchSteps;
-        unitLastDirection6.x = lastDirection.x / magnitude * 6;
+        unitLastDirection6.x = lastDirection.x / magnitude * 6; // todo maybe change the 6 to somefin else? idk it worked so..
         unitLastDirection6.y = lastDirection.y / magnitude * 6;
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
@@ -59,6 +61,7 @@ public class Branch {
         y = lastTreeStep.y + newDirection.y;
         z = lastTreeStep.z + newDirection.z;
 
+        //todo maybe (0,0,0) should be somefin else
         branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
         branchSteps.add(tree.put(x, y, z, lastDirection, lastSlopeOfSlope, lastWidth));
 

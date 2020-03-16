@@ -1,17 +1,12 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
-import net.minecraft.server.v1_15_R1.Quaternion;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Random;
 
 public class BaseTrunk {
@@ -23,8 +18,8 @@ public class BaseTrunk {
 
     public static void initialize(JavaPlugin pl) {
         random = new Random();
-        Branch.initialize(pl,random);
-        RandomChange.initialize(pl,random);
+        BranchStep.initialize(pl, random);
+        RandomChange.initialize(pl, random);
 
     }
 
@@ -53,21 +48,22 @@ public class BaseTrunk {
                     break treeStepLoop;
                 lastTreeStep = lastTreeSteps.remove(0);
             }
-            if (lastTreeStep.y > trunk_height)
-                break;
+            if (lastTreeStep.y > trunk_height || lastTreeStep.y < 0
+                    || lastTreeStep.x < 0 || lastTreeStep.x > tree.sizeX()
+                    || lastTreeStep.z < 0 || lastTreeStep.z > tree.sizeZ())
+                continue;
             TreeStep currentTreeStep;
             if (random.nextDouble() < BRANCHING_CHANCE) {
                 System.out.println("Branched!");
-                lastTreeSteps.addAll(Branch.getBranches(tree, lastTreeStep, 30, .5, 4));
+                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 30, .5, 4, 2));
             } else {
-                currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood,DECAY_RATE);
+                currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, DECAY_RATE);
                 lastTreeSteps.add(currentTreeStep);
             }
         }
 
         return tree;
     }
-
 
 
     private static TreeStep createBaseStart(TreeArray tree, Vec3d direction, int trunk_width, Vec3d leanStart) {

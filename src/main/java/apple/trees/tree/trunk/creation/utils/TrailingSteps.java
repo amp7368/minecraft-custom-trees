@@ -1,11 +1,11 @@
-package apple.trees.tree.trunk.creation;
+package apple.trees.tree.trunk.creation.utils;
 
 import com.sun.javafx.geom.Vec3d;
 
 import java.util.ArrayList;
 
 public class TrailingSteps {
-    protected static ArrayList<Vec3d> getTrailingSquares(Vec3d lastDirection, Vec3d lastTreeStepLocation) {
+    public static ArrayList<Vec3d> getTrailingSquares(Vec3d lastDirection, Vec3d lastTreeStepLocation) {
         ArrayList<Vec3d> locations = new ArrayList<>();
 
         // make the unit vector of lastDirection

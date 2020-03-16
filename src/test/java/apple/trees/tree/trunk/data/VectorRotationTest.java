@@ -1,6 +1,6 @@
 package apple.trees.tree.trunk.data;
 
-import apple.trees.tree.trunk.creation.VectorRotation;
+import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import com.sun.javafx.geom.Vec3d;
 
 public class VectorRotationTest {

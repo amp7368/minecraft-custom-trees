@@ -1,12 +1,7 @@
 package apple.trees.tree.trunk;
 
-import apple.trees.tree.refine.ResolutionDecreaser;
-import apple.trees.tree.trunk.creation.Trunk;
-import apple.trees.tree.trunk.creation.VectorRotation;
-import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.creation.BaseTrunk;
 import apple.trees.tree.trunk.data.VectorRotationTest;
-import com.sun.javafx.geom.Vec3d;
 
 public class StressTest {
     public static void main(String[] args) {
