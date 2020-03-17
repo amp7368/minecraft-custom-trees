@@ -23,13 +23,11 @@ public class BaseTrunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-    private TreeArray tree;
     private static final int MAX_COMPLETED_STEPS = 1000;
     private static Random random;
     private Vec3d startDirection;
 
     public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
-        this.tree = new TreeArray(100, 100, 100);
         this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
@@ -58,8 +56,10 @@ public class BaseTrunk {
      * @return the tree that was slightly filled in
      */
     public TreeArray createBaseTrunk() {
+        TreeArray tree = new TreeArray(100, 100, 100);
+
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
-        lastTreeSteps.add(createBaseStart());
+        lastTreeSteps.add(createBaseStart(tree));
         BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random);
         NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate);
         TreeStep lastTreeStep;
@@ -89,7 +89,7 @@ public class BaseTrunk {
     }
 
 
-    private TreeStep createBaseStart() {
+    private TreeStep createBaseStart(TreeArray tree) {
         int centerX = tree.sizeX() / 2;
         int centerY = 0;
         int centerZ = tree.sizeZ() / 2;
