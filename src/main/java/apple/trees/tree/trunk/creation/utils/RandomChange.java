@@ -6,12 +6,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Random;
 
 public class RandomChange {
+
+    // this is the normal curve that suits us best
     private static final double BELL_CURVE_A = .14;
     private static final double BELL_CURVE_B = .5;
     private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
     private static Random random;
 
-    public static void initialize(JavaPlugin pl, Random rand) {
+    public static void initialize(Random rand) {
         random = rand;
     }
 

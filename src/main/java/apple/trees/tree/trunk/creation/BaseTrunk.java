@@ -44,7 +44,7 @@ public class BaseTrunk {
 
     public static void initialize(JavaPlugin pl) {
         random = new Random();
-        RandomChange.initialize(pl, random);
+        RandomChange.initialize(random);
         GetRotations.initialize(random);
     }
 
