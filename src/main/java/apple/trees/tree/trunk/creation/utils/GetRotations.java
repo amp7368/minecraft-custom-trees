@@ -38,15 +38,17 @@ public class GetRotations {
     }
 
     private static ArrayList<Vec3d> rotationBaseFromDomain(int branchesToBuild) {
-        ArrayList<Vec3d> rotations;
-        if (branchesToBuild == 2) {
-            rotations = RotationPresets.branches2FromDomain();
-        } else if (branchesToBuild == 3) {
-            rotations = RotationPresets.branches3FromDomain();
-        } else {
-            rotations = new ArrayList<>();
-
-        }
+        ArrayList<Vec3d> rotations = RotationPresets.branchesFromDomain(branchesToBuild);
+//        if (branchesToBuild == 2) {
+//            rotations = RotationPresets.branches2FromDomain();
+//        } else if (branchesToBuild == 3) {
+//            rotations = RotationPresets.branches3FromDomain();
+//        }else if (branchesToBuild == 4) {
+//            rotations = RotationPresets.branches3FromDomain();
+//        } else {
+//            rotations = new ArrayList<>();
+//
+//        }
         return rotations;
     }
 

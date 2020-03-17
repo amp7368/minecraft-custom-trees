@@ -16,7 +16,7 @@ public class BaseTrunk {
     private static final double DECAY_RATE = .05;
     private static final double BRANCHING_CHANCE = .1;
     private static final int maxCompletedSteps = 1000;
-    private static final int BRANCHES_MEAN = 3;
+    private static final int BRANCHES_MEAN = 4;
     private static Random random;
 
     public static void initialize(JavaPlugin pl) {
