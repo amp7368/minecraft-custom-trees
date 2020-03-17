@@ -18,16 +18,6 @@ public class VectorRotation {
         Matrix3f matrix = new Matrix3f();
 
         //refresher m01 is row 0, col 1
-//        matrix.m00 = (float) (Math.cos(zTheta) * Math.cos(yTheta));
-//        matrix.m01 = (float) (Math.cos(zTheta) * Math.sin(yTheta) * Math.sin(xTheta) - Math.sin(zTheta) * Math.cos(xTheta));
-//        matrix.m02 = (float) (Math.cos(zTheta) * Math.sin(yTheta) * Math.cos(xTheta) + Math.sin(zTheta) * Math.sin(xTheta));
-//        matrix.m10 = (float) (Math.sin(zTheta) * Math.cos(yTheta));
-//        matrix.m11 = (float) (Math.sin(zTheta) * Math.sin(yTheta) * Math.sin(xTheta) + Math.cos(zTheta) * Math.cos(xTheta));
-//        matrix.m12 = (float) (Math.sin(zTheta) * Math.sin(yTheta) * Math.cos(xTheta) - Math.cos(zTheta) * Math.sin(xTheta));
-//        matrix.m20 = (float) (-Math.sin(yTheta));
-//        matrix.m21 = (float) (Math.cos(yTheta) * Math.sin(xTheta));
-//        matrix.m22 = (float) (Math.cos(yTheta) * Math.cos(xTheta));
-//      same things ^v^v^v...
         matrix.m00 = (float) (Math.cos(zTheta) * Math.cos(yTheta));
         matrix.m01 = (float) (Math.cos(zTheta) * Math.sin(yTheta) * Math.sin(xTheta) - Math.cos(xTheta) * Math.sin(zTheta));
         matrix.m02 = (float) (Math.sin(zTheta) * Math.sin(xTheta) + Math.cos(zTheta) * Math.cos(xTheta) * Math.sin(yTheta));
