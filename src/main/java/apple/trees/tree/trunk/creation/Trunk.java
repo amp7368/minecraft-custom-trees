@@ -29,7 +29,7 @@ public class Trunk {
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
         decayRate = .05;
-        branchingChance = .06;
+        branchingChance = .08;
         branchesMean = 4;
         tree = new TreeArray(100, 100, 100);
     }

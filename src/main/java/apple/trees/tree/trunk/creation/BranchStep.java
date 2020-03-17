@@ -13,11 +13,18 @@ import java.util.Collection;
 import java.util.Random;
 
 public class BranchStep {
-    private static Random random;
+    private Random random;
+    private int branchAngle;
+    private double branchStealing;
+    private int branchesMean;
 
-    public static void initialize(JavaPlugin pl, Random rand) {
-        BranchStep.random = rand;
+    public BranchStep(int branchAngle, double branchStealing, int branchesMean,Random random) {
+        this.branchAngle = branchAngle;
+        this.branchStealing = branchStealing;
+        this.branchesMean = branchesMean;
+        this.random = random;
     }
+
 
     /**
      * make a branch session instead of continuing the tree
@@ -29,7 +36,7 @@ public class BranchStep {
      * @param branchesMean   how many branches are typically in a group
      * @return all the last created steps for the branch session
      */
-    protected static Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double branchAngle, double branchStealing, int branchesMean) {
+    protected Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep) {
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 

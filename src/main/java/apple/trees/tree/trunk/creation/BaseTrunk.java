@@ -24,6 +24,7 @@ public class BaseTrunk {
     TreeArray tree;
     private static final int maxCompletedSteps = 1000;
     private static Random random;
+    private Vec3d startDirection;
 
     public BaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
         this.trunk_width = trunk_width;
@@ -36,11 +37,11 @@ public class BaseTrunk {
         this.branchingChance = branchingChance;
         this.branchesMean = branchesMean;
         this.tree = tree;
+        this.startDirection = new Vec3d(0, 1, 0);
     }
 
     public static void initialize(JavaPlugin pl) {
         random = new Random();
-        BranchStep.initialize(pl, random);
         RandomChange.initialize(pl, random);
         GetRotations.initialize(pl, random);
         RotationPresets.initialize(pl, random);
@@ -53,7 +54,8 @@ public class BaseTrunk {
      */
     public TreeArray createBaseTrunk() {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
-        lastTreeSteps.add(createBaseStart(tree, new Vec3d(0, 1, 0), trunk_width, leanStart));
+        lastTreeSteps.add(createBaseStart());
+        BranchStep branchStep = new BranchStep(10, .5, branchesMean, random);
         TreeStep lastTreeStep;
         // loop until all the ends are finished
         treeStepLoop:
@@ -70,7 +72,7 @@ public class BaseTrunk {
                 continue;
             TreeStep currentTreeStep;
             if (random.nextDouble() < branchingChance) {
-                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, branchesMean));
+                lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {
                 currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, decayRate);
                 lastTreeSteps.add(currentTreeStep);
@@ -81,7 +83,7 @@ public class BaseTrunk {
     }
 
 
-    private static TreeStep createBaseStart(TreeArray tree, Vec3d direction, int trunk_width, Vec3d leanStart) {
+    private TreeStep createBaseStart() {
         int centerX = tree.sizeX() / 2;
         int centerY = 0;
         int centerZ = tree.sizeZ() / 2;
@@ -93,7 +95,7 @@ public class BaseTrunk {
                 if (xi == 0 && zi == 0) {
                     int a = 3;
                 }
-                tree.put(centerX + xi + 0.5, centerY + 0.5, centerZ + zi + 0.5, leanStart, direction, trunk_width);
+                tree.put(centerX + xi + 0.5, centerY + 0.5, centerZ + zi + 0.5, leanStart, startDirection, trunk_width);
             }
         }
         return tree.get(centerX, centerY, centerZ);
