@@ -14,8 +14,9 @@ import java.util.Random;
 public class BaseTrunk {
 
     private static final double DECAY_RATE = .05;
-    private static final double BRANCHING_CHANCE = .2;
+    private static final double BRANCHING_CHANCE = .1;
     private static final int maxCompletedSteps = 1000;
+    private static final int BRANCHES_MEAN = 3;
     private static Random random;
 
     public static void initialize(JavaPlugin pl) {
@@ -57,7 +58,7 @@ public class BaseTrunk {
                 continue;
             TreeStep currentTreeStep;
             if (random.nextDouble() < BRANCHING_CHANCE) {
-                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, 2));
+                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, BRANCHES_MEAN));
             } else {
                 currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, DECAY_RATE);
                 lastTreeSteps.add(currentTreeStep);

@@ -4,6 +4,7 @@ import com.sun.javafx.geom.Vec3d;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class RotationPresets {
@@ -51,9 +52,30 @@ public class RotationPresets {
 
     protected static ArrayList<Vec3d> branches3FromDomain() {
         ArrayList<Vec3d> polars = new ArrayList<>();
-        polars.add(new Vec3d(0, 0, 0));
-        polars.add(new Vec3d(-360, -360, -360));
-        polars.add(new Vec3d(360, 360, 360));
+        for (int i = 0; i < 3; i++) {
+            polars.add(new Vec3d());
+        }
+
+        //fill arr with the different vals that the components could be
+        ArrayList<Double> arr = new ArrayList<>();
+        arr.add((double) -360);
+        arr.add((double) 0);
+        arr.add((double) 360);
+
+        // for each component, add the correct component to each branch
+        for (int i = 0; i < 3; i++) {
+            Collections.shuffle(arr);
+            polars.get(i).x = arr.get(i);
+        }
+        for (int i = 0; i < 3; i++) {
+            Collections.shuffle(arr);
+            polars.get(i).y = arr.get(i);
+        }
+        for (int i = 0; i < 3; i++) {
+            Collections.shuffle(arr);
+            polars.get(i).z = arr.get(i);
+        }
+
         return polars;
     }
 }
