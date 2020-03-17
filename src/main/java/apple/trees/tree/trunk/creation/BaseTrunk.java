@@ -64,16 +64,23 @@ public class BaseTrunk {
         // loop until all the ends are finished
         treeStepLoop:
         for (int currentCompletedSteps = 0; currentCompletedSteps < MAX_COMPLETED_STEPS && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
+            // get the last step
             lastTreeStep = lastTreeSteps.remove(0);
+
+            // if the step is bad, go to the next one
             while (lastTreeStep == null) {
                 if (lastTreeSteps.isEmpty())
                     break treeStepLoop;
                 lastTreeStep = lastTreeSteps.remove(0);
             }
+
+            // if we went outside of where we should, stop this branch
             if (lastTreeStep.y > trunk_height || lastTreeStep.y < 0
                     || lastTreeStep.x < 0 || lastTreeStep.x > tree.sizeX()
                     || lastTreeStep.z < 0 || lastTreeStep.z > tree.sizeZ())
                 continue;
+
+            // do either a branch or a normal step
             TreeStep currentTreeStep;
             if (random.nextDouble() < branchingChance) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
@@ -86,7 +93,12 @@ public class BaseTrunk {
         return tree;
     }
 
-
+    /**
+     * create the base of the tree (won't be needed later)
+     *
+     * @param tree the tree we're adding to
+     * @return the base of the tre
+     */
     private TreeStep createBaseStart(TreeArray tree) {
         int centerX = tree.sizeX() / 2;
         int centerY = 0;
