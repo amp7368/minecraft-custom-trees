@@ -41,20 +41,22 @@ public class TreeArray {
      * @return the newly created step
      */
     public TreeStep put(double x, double y, double z, Vec3d direction, Vec3d slopeOfSlope, double width) {
-        //todo optimize (int) x
+        int broadX = (int) x;
+        int broadY = (int) y;
+        int broadZ = (int) z;
         if (x < sizeX() && y < sizeY() && z < sizeZ() && x >= 0 && y >= 0 && z >= 0) {
-            if (x != (int) x && y != (int) y && z != (int) z) {
-                ArrayList<Vec3d> locations = getNearbySquares((int) x, (int) y, (int) z, x, y, z);
+            if (x != broadX && y != broadY && z != broadZ) {
+                ArrayList<Vec3d> locations = getNearbySquares(broadX, broadY, broadZ, x, y, z);
                 for (Vec3d loc : locations) {
-                    tree[(int) x][(int) y][(int) z] = new TreeStep((int) loc.x, (int) loc.y, (int) loc.z, direction, slopeOfSlope, width);
+                    tree[broadX][broadY][broadZ] = new TreeStep((int) loc.x, (int) loc.y, (int) loc.z, direction, slopeOfSlope, width);
                 }
             }
-            if (tree[(int) x][(int) y][(int) z] == null) {
-                TreeStep step = new TreeStep((int) x, (int) y, (int) z, direction, slopeOfSlope, width);
-                tree[(int) x][(int) y][(int) z] = step;
+            if (tree[broadX][broadY][broadZ] == null) {
+                TreeStep step = new TreeStep(broadX, broadY, broadZ, direction, slopeOfSlope, width);
+                tree[broadX][broadY][broadZ] = step;
                 return step;
             } else {
-                return tree[(int) x][(int) y][(int) z];
+                return tree[broadX][broadY][broadZ];
             }
         }
         return null;
@@ -65,13 +67,15 @@ public class TreeArray {
     }
 
     public int sizeY() {
-        //todo
-        return tree[0].length;
+        if (tree.length != 0)
+            return tree[0].length;
+        return 0;
     }
 
     public int sizeZ() {
-        //todo
-        return tree[0][0].length;
+        if (tree.length != 0 && tree[0].length != 0)
+            return tree[0][0].length;
+        return 0;
     }
 
     /**
