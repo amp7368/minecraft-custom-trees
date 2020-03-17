@@ -42,37 +42,23 @@ public class Trunk {
             System.out.println(String.format("there is no tree that exists with name: %s", treeType));
             return;
         }
-        System.out.println("file exists");
 
         YamlConfiguration configOrig = YamlConfiguration.loadConfiguration(file);
         ConfigurationSection config = configOrig.getConfigurationSection("vars");
 
         assert config != null;
         trunk_width = config.getInt(YMLNavigate.TRUNK_WIDTH);
-        System.out.println("trunk_width " + trunk_width);
         trunk_height = config.getInt(YMLNavigate.TRUNK_HEIGHT);
-        System.out.println("trunk_height " + trunk_height);
-        leanMagnitude = (float) config.getDouble(YMLNavigate.LEAN_MAGNITUDE);
-        System.out.println("leanMagnitude " + leanMagnitude);
         leanLikelihood = (float) config.getDouble(YMLNavigate.LEAN_LIKELIHOOD);
-        System.out.println("leanLikelihood " + leanLikelihood);
         maxLean = (float) config.getDouble(YMLNavigate.MAX_LEAN);
-        System.out.println("maxLean " + maxLean);
-
         double leanStartX = config.getDouble(YMLNavigate.LEAN_START_X);
-        System.out.println("leanStartX " + leanStartX);
         double leanStartY = config.getDouble(YMLNavigate.LEAN_START_Y);
-        System.out.println("leanStartY " + leanStartY);
         double leanStartZ = config.getDouble(YMLNavigate.LEAN_START_Z);
-        System.out.println("leanStartZ " + leanStartZ);
         leanStart = new Vec3d(leanStartX, leanStartY, leanStartZ);
 
         decayRate = config.getDouble(YMLNavigate.DECAY_RATE);
-        System.out.println("decayRate " + decayRate);
         branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
-        System.out.println("branchingChance " + branchingChance);
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
-        System.out.println("branchesMean " + branchesMean);
     }
 
     /**
