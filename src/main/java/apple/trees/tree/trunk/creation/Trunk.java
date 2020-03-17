@@ -20,7 +20,7 @@ public class Trunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-
+    private int branchAngle;
     /**
      * creates a Trunk with default values
      * todo make a yml with different default values
@@ -59,6 +59,7 @@ public class Trunk {
         decayRate = config.getDouble(YMLNavigate.DECAY_RATE);
         branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
+        branchAngle = config.getInt(YMLNavigate.BRANCH_ANGLE);
     }
 
     /**
@@ -74,13 +75,14 @@ public class Trunk {
         decayRate = .05;
         branchingChance = .07;
         branchesMean = 4;
+        branchAngle = 20;
     }
 
     /**
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean);
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean,branchAngle);
         return baseTrunk.createBaseTrunk();
     }
 

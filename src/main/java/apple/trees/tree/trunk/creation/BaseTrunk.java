@@ -29,7 +29,7 @@ public class BaseTrunk {
     private static Random random;
     private Vec3d startDirection;
 
-    public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
+    public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean,int branchAngle) {
         this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
@@ -40,7 +40,7 @@ public class BaseTrunk {
         this.decayRate = decayRate;
         this.branchingChance = branchingChance;
         this.branchesMean = branchesMean;
-        this.branchAngle = 10;
+        this.branchAngle = branchAngle;
         this.branchStealing = .5;
     }
 

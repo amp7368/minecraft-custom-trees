@@ -12,4 +12,5 @@ public class YMLNavigate {
     public static final String DECAY_RATE = "decayRate";
     public static final String BRANCHES_MEAN = "branchesMean";
     public static final String MAX_LEAN = "maxLean";
+    public static final String BRANCH_ANGLE = "branchAngle";
 }
