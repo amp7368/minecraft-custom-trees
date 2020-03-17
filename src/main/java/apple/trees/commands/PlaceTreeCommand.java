@@ -23,7 +23,8 @@ public class PlaceTreeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        TreeArray tree = Trunk.makeTrunk(10, 100, (float) .1, 3, 10, new Vec3d(0, 3, 0), DECAY_RATE, BRANCHING_CHANCE, BRANCHES_MEAN);
+        Trunk trunk = new Trunk();
+        TreeArray tree = trunk.makeTrunk();
 //        tree = ResolutionDecreaser.pixelify(tree, 3);
         Location loc = Bukkit.getPlayer(commandSender.getName()).getLocation();
         placeTree(tree, loc);

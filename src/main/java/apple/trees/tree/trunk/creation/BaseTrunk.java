@@ -12,9 +12,31 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BaseTrunk {
-
+    private int trunk_width;
+    private int trunk_height;
+    private float leanMagnitude;
+    private float leanLikelihood;
+    private float maxLean;
+    private Vec3d leanStart;
+    private double decayRate;
+    private double branchingChance;
+    private int branchesMean;
+    TreeArray tree;
     private static final int maxCompletedSteps = 1000;
     private static Random random;
+
+    public BaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
+        this.trunk_width = trunk_width;
+        this.trunk_height = trunk_height;
+        this.leanMagnitude = leanMagnitude;
+        this.leanLikelihood = leanLikelihood;
+        this.maxLean = maxLean;
+        this.leanStart = leanStart;
+        this.decayRate = decayRate;
+        this.branchingChance = branchingChance;
+        this.branchesMean = branchesMean;
+        this.tree = tree;
+    }
 
     public static void initialize(JavaPlugin pl) {
         random = new Random();
@@ -27,18 +49,11 @@ public class BaseTrunk {
     /**
      * creates a random base trunk with the specified options
      *
-     * @param trunk_width    the desired average width of the trunk
-     * @param trunk_height   the absolute height of the trunk
-     * @param leanLikelihood (between 0 and 1) (very low) the chance a change in slope of slope will occur in any given step
-     * @param leanMagnitude  (between 0 and 1) the angle magnitude of lean shift if one occurs in any given step
-     * @param maxLean        (between 0 and 1) the maximum amount a tree is allowed to lean
-     * @param leanStart      (between 0 and 1) the starting lean of the trunk
      * @return the tree that was slightly filled in
      */
-    public static TreeArray createBaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart,double decayRate,double branchingChance, int branchesMean) {
+    public TreeArray createBaseTrunk() {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree, new Vec3d(0, 1, 0), trunk_width, leanStart));
-
         TreeStep lastTreeStep;
         // loop until all the ends are finished
         treeStepLoop:
