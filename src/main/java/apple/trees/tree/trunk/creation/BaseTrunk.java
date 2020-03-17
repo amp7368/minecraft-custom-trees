@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BaseTrunk {
+    private final int branchAngle;
+    private final double branchStealing;
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;
@@ -22,7 +24,7 @@ public class BaseTrunk {
     private double branchingChance;
     private int branchesMean;
     TreeArray tree;
-    private static final int maxCompletedSteps = 1000;
+    private static final int MAX_COMPLETED_STEPS = 1000;
     private static Random random;
     private Vec3d startDirection;
 
@@ -38,6 +40,9 @@ public class BaseTrunk {
         this.branchesMean = branchesMean;
         this.tree = tree;
         this.startDirection = new Vec3d(0, 1, 0);
+        this.branchAngle = 10;
+        this.branchStealing = .5;
+
     }
 
     public static void initialize(JavaPlugin pl) {
@@ -55,11 +60,12 @@ public class BaseTrunk {
     public TreeArray createBaseTrunk() {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart());
-        BranchStep branchStep = new BranchStep(10, .5, branchesMean, random);
+        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random);
+        NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate);
         TreeStep lastTreeStep;
         // loop until all the ends are finished
         treeStepLoop:
-        for (int currentCompletedSteps = 0; currentCompletedSteps < maxCompletedSteps && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
+        for (int currentCompletedSteps = 0; currentCompletedSteps < MAX_COMPLETED_STEPS && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
             lastTreeStep = lastTreeSteps.remove(0);
             while (lastTreeStep == null) {
                 if (lastTreeSteps.isEmpty())
@@ -74,7 +80,7 @@ public class BaseTrunk {
             if (random.nextDouble() < branchingChance) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {
-                currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, decayRate);
+                currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep);
                 lastTreeSteps.add(currentTreeStep);
             }
         }

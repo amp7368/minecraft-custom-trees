@@ -9,17 +9,25 @@ import com.sun.javafx.geom.Vec3d;
 import java.util.ArrayList;
 
 public class NormalStep {
+    private double leanMagnitude;
+    private double leanLikelihood;
+    private double decayRate;
+
+    protected NormalStep(double leanMagnitude, double leanLikelihood, double decayRate) {
+        this.leanMagnitude = leanMagnitude;
+        this.leanLikelihood = leanLikelihood;
+        this.decayRate = decayRate;
+    }
+
     /**
      * get the next tree step from what was given about the last tree step
      * add any steps to the tree
      *
      * @param tree           the entire tree and all the steps within it
      * @param lastTreeStep   the tree step that was last created
-     * @param leanMagnitude  how much lean will happen (determines the intensity of curves)
-     * @param leanLikelihood how likely a new lean will start (determines the squigiliness of the lean
      * @return the new main step in the tree
      */
-    static TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, double leanMagnitude, double leanLikelihood,double decayRate) {
+    protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep) {
         Vec3d lastDirection = lastTreeStep.direction;
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
