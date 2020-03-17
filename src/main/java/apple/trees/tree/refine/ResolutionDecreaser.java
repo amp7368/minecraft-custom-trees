@@ -14,8 +14,7 @@ public class ResolutionDecreaser {
      * @return the new tree
      */
     public static TreeArray pixelify(TreeArray tree, double ratio) {
-        System.out.println("\n\npixelifying now\n");
-        // create a new tree of the correctish size
+        // create a new tree of the correct-ish size
         int sizeX = (int) (tree.sizeX() / ratio);
         int sizeY = (int) (tree.sizeY() / ratio);
         int sizeZ = (int) (tree.sizeZ() / ratio);
@@ -39,7 +38,6 @@ public class ResolutionDecreaser {
                 }
             }
         }
-        System.out.println("done pixelifying");
         return newTree;
     }
 
