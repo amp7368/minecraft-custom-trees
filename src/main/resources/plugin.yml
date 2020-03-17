@@ -5,5 +5,5 @@ author: Apple
 main: apple.trees.TreeMain
 description: Rewards players that build with points
 commands:
-  place_tree:
+  tree_create:
     description: creates a tre
