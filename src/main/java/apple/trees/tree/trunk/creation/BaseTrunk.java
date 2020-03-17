@@ -13,10 +13,7 @@ import java.util.Random;
 
 public class BaseTrunk {
 
-    private static final double DECAY_RATE = .05;
-    private static final double BRANCHING_CHANCE = .1;
     private static final int maxCompletedSteps = 1000;
-    private static final int BRANCHES_MEAN = 4;
     private static Random random;
 
     public static void initialize(JavaPlugin pl) {
@@ -38,7 +35,7 @@ public class BaseTrunk {
      * @param leanStart      (between 0 and 1) the starting lean of the trunk
      * @return the tree that was slightly filled in
      */
-    public static TreeArray createBaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
+    public static TreeArray createBaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart,double decayRate,double branchingChance, int branchesMean) {
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree, new Vec3d(0, 1, 0), trunk_width, leanStart));
 
@@ -57,10 +54,10 @@ public class BaseTrunk {
                     || lastTreeStep.z < 0 || lastTreeStep.z > tree.sizeZ())
                 continue;
             TreeStep currentTreeStep;
-            if (random.nextDouble() < BRANCHING_CHANCE) {
-                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, BRANCHES_MEAN));
+            if (random.nextDouble() < branchingChance) {
+                lastTreeSteps.addAll(BranchStep.getBranches(tree, lastTreeStep, 10, .5, branchesMean));
             } else {
-                currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, DECAY_RATE);
+                currentTreeStep = NormalStep.getCurrentTreeStep(tree, lastTreeStep, leanMagnitude, leanLikelihood, decayRate);
                 lastTreeSteps.add(currentTreeStep);
             }
         }

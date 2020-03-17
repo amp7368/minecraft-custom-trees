@@ -13,13 +13,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlaceTreeCommand implements CommandExecutor {
+    private static final double DECAY_RATE = .05;
+    private static final double BRANCHING_CHANCE = .06;
+    private static final int BRANCHES_MEAN = 4;
+
     public PlaceTreeCommand(JavaPlugin plugin) {
         plugin.getCommand("place_tree").setExecutor(this);
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        TreeArray tree = Trunk.makeTrunk(10, 100, (float) .1, 3, 10, new Vec3d(0, 3, 0));
+        TreeArray tree = Trunk.makeTrunk(10, 100, (float) .1, 3, 10, new Vec3d(0, 3, 0), DECAY_RATE, BRANCHING_CHANCE, BRANCHES_MEAN);
 //        tree = ResolutionDecreaser.pixelify(tree, 3);
         Location loc = Bukkit.getPlayer(commandSender.getName()).getLocation();
         placeTree(tree, loc);

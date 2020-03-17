@@ -4,7 +4,6 @@ import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
 
 public class Trunk {
-
     /**
      * creates a random trunk with the specified options
      *
@@ -15,9 +14,9 @@ public class Trunk {
      * @param maxLean        (between 0 and 1) the maximum amount a tree is allowed to lean
      * @param leanStart      (between 0 and 1) the starting lean of the trunk
      */
-    public static TreeArray makeTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart) {
+    public static TreeArray makeTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
         TreeArray tree = new TreeArray(100, 100, 100);
-        BaseTrunk.createBaseTrunk(tree, trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart);
+        BaseTrunk.createBaseTrunk(tree, trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean);
         return tree;
     }
 
@@ -34,6 +33,6 @@ public class Trunk {
      */
     public static TreeArray makeTrunkFromRaw(int trunk_width, int trunk_height, int leanMagnitude, int leanLikelihood, int maxLean, int leanStart) {
         //todo
-        return makeTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, new Vec3d(leanStart, leanStart, leanStart));
+        return null;
     }
 }
