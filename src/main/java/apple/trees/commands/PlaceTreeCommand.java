@@ -17,17 +17,23 @@ public class PlaceTreeCommand implements CommandExecutor {
     private static final double DECAY_RATE = .05;
     private static final double BRANCHING_CHANCE = .06;
     private static final int BRANCHES_MEAN = 4;
+    private final JavaPlugin plugin;
 
     public PlaceTreeCommand(JavaPlugin plugin) {
+        this.plugin = plugin;
         plugin.getCommand("place_tree").setExecutor(this);
     }
 
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        // create a trunk with default values
-        Trunk trunk = new Trunk();
-
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+        Trunk trunk;
+        if (args.length == 1) {
+            trunk = new Trunk(args[0], plugin);
+        } else {
+            // create a trunk with default values
+            trunk = new Trunk();
+        }
         // make a trunk given the default values in trunk
         TreeArray tree = trunk.makeTrunk();
 

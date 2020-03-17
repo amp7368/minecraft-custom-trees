@@ -1,15 +1,19 @@
 package apple.trees.tree.trunk.creation;
 
+import apple.trees.YMLNavigate;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class Trunk {
 
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;
-
-
     private float leanLikelihood;
     private float maxLean;
     private Vec3d leanStart;
@@ -19,8 +23,62 @@ public class Trunk {
 
     /**
      * creates a Trunk with default values
+     * todo make a yml with different default values
      */
     public Trunk() {
+        setDefaultValues();
+    }
+
+    /**
+     * gets the presets in a yml file
+     *
+     * @param treeType the type of tree we're making and the name of the file to open
+     * @param plugin   the plugin so we can get the plugin folder
+     */
+    public Trunk(String treeType, JavaPlugin plugin) {
+        File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, treeType, ".yml"));
+        if (file.exists()) {
+            setDefaultValues();
+            System.out.println(String.format("there is no tree that exists with name: %s", treeType));
+            return;
+        }
+        System.out.println("file exists");
+
+        YamlConfiguration configOrig = YamlConfiguration.loadConfiguration(file);
+        ConfigurationSection config = configOrig.getConfigurationSection("vars");
+
+        assert config != null;
+        trunk_width = config.getInt(YMLNavigate.TRUNK_WIDTH);
+        System.out.println("trunk_width " + trunk_width);
+        trunk_height = config.getInt(YMLNavigate.TRUNK_HEIGHT);
+        System.out.println("trunk_height " + trunk_height);
+        leanMagnitude = (float) config.getDouble(YMLNavigate.LEAN_MAGNITUDE);
+        System.out.println("leanMagnitude " + leanMagnitude);
+        leanLikelihood = (float) config.getDouble(YMLNavigate.LEAN_LIKELIHOOD);
+        System.out.println("leanLikelihood " + leanLikelihood);
+        maxLean = (float) config.getDouble(YMLNavigate.MAX_LEAN);
+        System.out.println("maxLean " + maxLean);
+
+        double leanStartX = config.getDouble(YMLNavigate.LEAN_START_X);
+        System.out.println("leanStartX " + leanStartX);
+        double leanStartY = config.getDouble(YMLNavigate.LEAN_START_Y);
+        System.out.println("leanStartY " + leanStartY);
+        double leanStartZ = config.getDouble(YMLNavigate.LEAN_START_Z);
+        System.out.println("leanStartZ " + leanStartZ);
+        leanStart = new Vec3d(leanStartX, leanStartY, leanStartZ);
+
+        decayRate = config.getDouble(YMLNavigate.DECAY_RATE);
+        System.out.println("decayRate " + decayRate);
+        branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
+        System.out.println("branchingChance " + branchingChance);
+        branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
+        System.out.println("branchesMean " + branchesMean);
+    }
+
+    /**
+     * sets default values for this tree
+     */
+    private void setDefaultValues() {
         trunk_width = 5;
         trunk_height = 100;
         leanMagnitude = (float) .1;
@@ -28,7 +86,7 @@ public class Trunk {
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
         decayRate = .05;
-        branchingChance = .08;
+        branchingChance = .07;
         branchesMean = 4;
     }
 
@@ -40,6 +98,7 @@ public class Trunk {
         return baseTrunk.createBaseTrunk();
     }
 
+    //todo do input validation
     public Trunk setTrunk_width(int trunk_width) {
         this.trunk_width = trunk_width;
         return this;

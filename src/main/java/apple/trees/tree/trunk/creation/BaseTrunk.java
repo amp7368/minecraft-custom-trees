@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class BaseTrunk {
+    private static final int MAX_COMPLETED_STEPS = 1000;
+    private static final double BELL_CURVE_A = .15;
+    private static final double BELL_CURVE_B = .1;
+    private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
     private final int branchAngle;
     private final double branchStealing;
     private int trunk_width;
@@ -22,7 +26,6 @@ public class BaseTrunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-    private static final int MAX_COMPLETED_STEPS = 1000;
     private static Random random;
     private Vec3d startDirection;
 
@@ -39,7 +42,6 @@ public class BaseTrunk {
         this.branchesMean = branchesMean;
         this.branchAngle = 10;
         this.branchStealing = .5;
-
     }
 
     public static void initialize(JavaPlugin pl) {
@@ -82,7 +84,7 @@ public class BaseTrunk {
 
             // do either a branch or a normal step
             TreeStep currentTreeStep;
-            if (random.nextDouble() < branchingChance) {
+            if (random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {
                 currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep);
@@ -91,6 +93,11 @@ public class BaseTrunk {
         }
 
         return tree;
+    }
+
+    private double getBranchingChance(double width) {
+        return branchingChance * BELL_CURVE_LEFT * Math.pow(Math.E, -0.5 * (Math.pow(width - BELL_CURVE_B, 2)
+                / Math.pow(BELL_CURVE_A, 2)));
     }
 
     /**
