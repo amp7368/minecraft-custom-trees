@@ -23,12 +23,14 @@ public class BaseTrunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-    TreeArray tree;
+    private TreeArray tree;
     private static final int MAX_COMPLETED_STEPS = 1000;
     private static Random random;
     private Vec3d startDirection;
 
-    public BaseTrunk(TreeArray tree, int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
+    public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean) {
+        this.tree = new TreeArray(100, 100, 100);
+        this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
         this.leanMagnitude = leanMagnitude;
@@ -38,8 +40,6 @@ public class BaseTrunk {
         this.decayRate = decayRate;
         this.branchingChance = branchingChance;
         this.branchesMean = branchesMean;
-        this.tree = tree;
-        this.startDirection = new Vec3d(0, 1, 0);
         this.branchAngle = 10;
         this.branchStealing = .5;
 

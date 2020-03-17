@@ -16,7 +16,6 @@ public class Trunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-    TreeArray tree;
 
     /**
      * creates a Trunk with default values
@@ -31,16 +30,14 @@ public class Trunk {
         decayRate = .05;
         branchingChance = .08;
         branchesMean = 4;
-        tree = new TreeArray(100, 100, 100);
     }
 
     /**
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-        BaseTrunk baseTrunk = new BaseTrunk(tree, trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean);
-        baseTrunk.createBaseTrunk(); // tree was modified
-        return tree;
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean);
+        return baseTrunk.createBaseTrunk();
     }
 
     public Trunk setTrunk_width(int trunk_width) {
@@ -85,11 +82,6 @@ public class Trunk {
 
     public Trunk setBranchesMean(int branchesMean) {
         this.branchesMean = branchesMean;
-        return this;
-    }
-
-    public Trunk setTree(TreeArray tree) {
-        this.tree = tree;
         return this;
     }
 }
