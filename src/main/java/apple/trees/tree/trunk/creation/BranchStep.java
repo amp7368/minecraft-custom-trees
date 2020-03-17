@@ -64,7 +64,7 @@ public class BranchStep {
             y = lastTreeStep.y + newDirection.y;
             z = lastTreeStep.z + newDirection.z;
 
-            //todo maybe (0,0,0) should be somefin else
+            //todo maybe slope of (0,0,0) should be somefin else
             branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
 
             // make a list of the locations for the next full step
