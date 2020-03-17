@@ -5,6 +5,14 @@ import com.sun.javafx.geom.Vec3d;
 import java.util.ArrayList;
 
 public class TrailingSteps {
+
+    /**
+     * get the trailing squares that should be filled because they were skipped
+     *
+     * @param lastDirection        the direction the lastStep was heading
+     * @param lastTreeStepLocation the location the lastStep was
+     * @return a list of treeSteps that should be added with the same values of lastDirection and width
+     */
     public static ArrayList<Vec3d> getTrailingSquares(Vec3d lastDirection, Vec3d lastTreeStepLocation) {
         ArrayList<Vec3d> locations = new ArrayList<>();
 
@@ -23,6 +31,12 @@ public class TrailingSteps {
         // keep going in that direction until all the inbetweens are filled
         for (double x = lastTreeStepLocation.x, y = lastTreeStepLocation.y, z = lastTreeStepLocation.z; true;
              x += unitLastDirection.x, y += unitLastDirection.y, z += unitLastDirection.z) {
+
+            // if(lastDirection is going negative){
+            //   see if we passed the component we're filling the inbetweens for
+            // }else {
+            //   see if we passed the component we're filling the inbetweens for
+            // }
             if (unitLastDirection.x < 0) {
                 if (x < maxX)
                     break;
@@ -39,10 +53,13 @@ public class TrailingSteps {
             } else if (z > maxZ)
                 break;
 
-            //todo optimize
+            // if this location has already been added, don't add it
+            int broadX = (int) x;
+            int broadY = (int) y;
+            int broadZ = (int) z;
             boolean addMe = true;
             for (Vec3d location : locations) {
-                if ((int) location.x == (int) x && (int) location.y == (int) y && (int) location.z == (int) z) {
+                if ((int) location.x == broadX && (int) location.y == broadY && (int) location.z == broadZ) {
                     addMe = false;
                     break;
                 }
