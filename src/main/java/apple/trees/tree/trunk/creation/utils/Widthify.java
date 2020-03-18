@@ -24,6 +24,7 @@ public class Widthify {
                     TreeStep block = tree.get(x, y, z);
                     if (block != null) {
                         addWidthStep(newTree, block);
+                        newTree.put(block);
                     }
                 }
             }
@@ -36,6 +37,8 @@ public class Widthify {
     private static void addWidthStep(TreeArray newTree, TreeStep block) {
         Vec3d direction = block.direction;
         double widthDiv2 = block.width / 2;
+        double widthDiv2X = widthDiv2 + block.x;
+        double widthDiv2Y = widthDiv2 + block.y;
         // (v0,v1,v2) = normal vector
         // (x0,y0,z0) = plane passes through this point (circle is around this point)
         // v0 (x-x0) + v1 (y-y0) + v2 (z-z0)
@@ -43,27 +46,82 @@ public class Widthify {
         // v0(x) - v0(x0) + v1(y) - v1(y0) + v2(z) - v2(z0)
         // - v0(x0) - v1(y0) - v2(z0) + v0(x) + v1(y) + v2(z)
         // v0(x) + v1(y) + v2(z) = v0(x0) + v1(y0) + v2(z0)
-        double rightSide = direction.x * block.x + direction.y * block.y + direction.z * block.z;
+
+        double v0 = block.direction.x;
+        double v1 = block.direction.y;
+        double v2 = block.direction.z;
+        int x0 = block.x;
+        int y0 = block.y;
+        int z0 = block.z;
         ArrayList<Vec3d> list = new ArrayList<>();
 
-        //todo optimize
-        for (double x = -widthDiv2 + block.x; x < widthDiv2 + block.x; x++) {
-            // v1(y) + v2(z) = v0(x0) + v1(y0) + v2(z0) - v0(x)
-            double xvRightSide = rightSide - direction.x * x;
-            for (double y = -widthDiv2 + block.y; y < widthDiv2 + block.y; y++) {
-                // v2(z) = v0(x0) + v1(y0) + v2(z0) - v0(x) -v1(y)
-                double yvRightSide = xvRightSide - direction.y * y;
+        for (int x = (int) Math.floor(-widthDiv2); x <= widthDiv2 - 1; x++) {
+            for (int y = (int) Math.floor(-widthDiv2); y <= widthDiv2 - 1; y++) {
+                if (v2 == 0) {
+                    // try all the Z's
+                    for (int z = (int) Math.floor(-widthDiv2); z <= widthDiv2 - 1; z++) {
+                        final double highPoint = (x + 1) * v0 + (y + 1) * v1;
+                        final double lowPoint = x * v0 + y * v1;
+                        if (lowPoint < 0) {
+                            if (highPoint >= 0) {
+                                list.add(new Vec3d(x + x0, y + y0, z + z0));
+                            } else {
+                                // none of the Z's will work
+                                break;
+                            }
+                        } else if (lowPoint == 0) {
+                            list.add(new Vec3d(x + x0, y + y0, z + z0));
+                        } else if (highPoint <= 0) {
+                            list.add(new Vec3d(x + x0, y + y0, z + z0));
+                        } else {
+                            // none of the Z's will work
+                            break;
+                        }
+                    }
+                } else {
+                    double lowZ = (-x * v0 - y * v1) / v2;
+                    double highZ = (-(x + 1) * v0 - (y + 1) * v1) / v2;
 
-                // solve for z
-                double z = yvRightSide / direction.y;
+                    // convert lowZ to the lowest magnitude it could be
+                    boolean wasNegative = false;
+                    if (lowZ < 0)
+                        wasNegative = true;
+                    lowZ = Math.min(Math.abs(lowZ), widthDiv2);
+                    if (wasNegative)
+                        lowZ = -lowZ;
 
-                if (-widthDiv2 + block.z < z && z < widthDiv2 + block.z) {
-                    list.add(new Vec3d(x, y, z));
-                    System.out.println(String.format("x:%f,y:%f,z:%f", x, y, z));
+                    // convert highZ to the lowest magnitude it could be
+                    wasNegative = false;
+                    if (highZ < 0)
+                        wasNegative = true;
+                    highZ = Math.min(Math.abs(highZ), widthDiv2);
+                    if (wasNegative)
+                        highZ = -highZ;
+
+                    if (lowZ < highZ) {
+                        // go from lowZ to highZ
+                        for (int z = (int) Math.floor(lowZ); z <= highZ; z++) {
+                            // add all these z's
+                            list.add(new Vec3d(x + x0, y + y0, z + z0));
+                        }
+                    } else {
+                        // go from highZ to lowZ
+                        for (int z = (int) Math.floor(highZ); z <= lowZ; z++) {
+                            // add all these z's
+                            list.add(new Vec3d(x + x0, y + y0, z + z0));
+                        }
+                    }
+
+
                 }
+
 
             }
         }
 
+        // add the stuff in the list
+        for (Vec3d point : list) {
+            newTree.put(point.x, point.y, point.z, block.direction, block.slopeOfSlope, block.width);
+        }
     }
 }

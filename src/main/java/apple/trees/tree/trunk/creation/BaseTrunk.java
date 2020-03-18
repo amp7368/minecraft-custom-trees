@@ -42,6 +42,7 @@ public class BaseTrunk {
         this.branchesMean = branchesMean;
         this.branchAngle = branchAngle;
         this.branchStealing = .5;
+        //todo ^^^
     }
 
     public static void initialize() {
@@ -86,10 +87,6 @@ public class BaseTrunk {
 
             // do either a branch or a normal step
             TreeStep currentTreeStep;
-            System.out.print(branchingChance);
-            System.out.print("    " +lastTreeStep.width / trunk_width);
-            System.out.println("    " + getBranchingChance(lastTreeStep.width / trunk_width));
-
             if (random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {

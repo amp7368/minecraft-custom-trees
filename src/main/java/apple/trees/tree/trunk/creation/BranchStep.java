@@ -33,7 +33,6 @@ public class BranchStep {
      * @return all the last created steps for the branch session
      */
     protected Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep) {
-        System.out.println("branched!");
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 

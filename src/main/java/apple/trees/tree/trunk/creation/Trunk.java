@@ -1,6 +1,7 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.YMLNavigate;
+import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,6 +22,7 @@ public class Trunk {
     private double branchingChance;
     private int branchesMean;
     private int branchAngle;
+
     /**
      * creates a Trunk with default values
      * todo make a yml with different default values
@@ -82,8 +84,9 @@ public class Trunk {
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean,branchAngle);
-        return baseTrunk.createBaseTrunk();
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
+        return Widthify.addWidth(baseTrunk.createBaseTrunk());
+
     }
 
     //todo do input validation
