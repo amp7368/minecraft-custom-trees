@@ -8,7 +8,7 @@ import java.util.Random;
 public class RandomChange {
 
     // this is the normal curve that suits us best
-    private static final double BELL_CURVE_A = .14;
+    private static final double BELL_CURVE_A = .3;
     private static final double BELL_CURVE_B = .5;
     private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
     private static Random random;
@@ -26,7 +26,7 @@ public class RandomChange {
      * @return a number according to a bell curve with the height of about decay rate
      */
     public static double getRandomChangeWidth(double lastWidth, double decayRate) {
-        return lastWidth * decayRate / 2 * BELL_CURVE_LEFT * Math.pow(
+        return lastWidth * decayRate * BELL_CURVE_LEFT * Math.pow(
                 Math.E, -0.5 * (Math.pow(random.nextDouble() - BELL_CURVE_B, 2)
                         / Math.pow(BELL_CURVE_A, 2)));
     }

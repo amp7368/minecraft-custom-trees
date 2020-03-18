@@ -37,7 +37,7 @@ public class Trunk {
      */
     public Trunk(String treeType, JavaPlugin plugin) {
         File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, treeType, ".yml"));
-        if (file.exists()) {
+        if (!file.exists()) {
             setDefaultValues();
             System.out.println(String.format("there is no tree that exists with name: %s", treeType));
             return;
@@ -72,8 +72,8 @@ public class Trunk {
         leanLikelihood = 3;
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
-        decayRate = .05;
-        branchingChance = .07;
+        decayRate = .1;
+        branchingChance = .4;
         branchesMean = 4;
         branchAngle = 20;
     }

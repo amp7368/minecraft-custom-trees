@@ -17,7 +17,7 @@ public class BranchStep {
     private double branchStealing;
     private int branchesMean;
 
-    protected BranchStep(int branchAngle, double branchStealing, int branchesMean,Random random) {
+    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random) {
         this.branchAngle = branchAngle;
         this.branchStealing = branchStealing;
         this.branchesMean = branchesMean;
@@ -28,11 +28,12 @@ public class BranchStep {
     /**
      * make a branch session instead of continuing the tree
      *
-     * @param tree           the entire tree and all the steps within it
-     * @param lastTreeStep   the tree step that was last created
+     * @param tree         the entire tree and all the steps within it
+     * @param lastTreeStep the tree step that was last created
      * @return all the last created steps for the branch session
      */
     protected Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep) {
+        System.out.println("branched!");
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 
@@ -65,6 +66,7 @@ public class BranchStep {
             z = lastTreeStep.z + newDirection.z;
 
             //todo maybe slope of (0,0,0) should be somefin else
+            // todo last width should be changed to the new width
             branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
 
             // make a list of the locations for the next full step
