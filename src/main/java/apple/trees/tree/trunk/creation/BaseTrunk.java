@@ -61,7 +61,7 @@ public class BaseTrunk {
 
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree));
-        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random);
+        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random,decayRate);
         NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate);
         TreeStep lastTreeStep;
         // loop until all the ends are finished

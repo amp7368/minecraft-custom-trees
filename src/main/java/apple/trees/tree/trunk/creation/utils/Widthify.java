@@ -35,10 +35,7 @@ public class Widthify {
     }
 
     private static void addWidthStep(TreeArray newTree, TreeStep block) {
-        Vec3d direction = block.direction;
         double widthDiv2 = block.width / 2;
-        double widthDiv2X = widthDiv2 + block.x;
-        double widthDiv2Y = widthDiv2 + block.y;
         // (v0,v1,v2) = normal vector
         // (x0,y0,z0) = plane passes through this point (circle is around this point)
         // v0 (x-x0) + v1 (y-y0) + v2 (z-z0)
@@ -55,11 +52,12 @@ public class Widthify {
         int z0 = block.z;
         ArrayList<Vec3d> list = new ArrayList<>();
 
-        for (int x = (int) Math.floor(-widthDiv2); x <= widthDiv2 - 1; x++) {
-            for (int y = (int) Math.floor(-widthDiv2); y <= widthDiv2 - 1; y++) {
+        double widthDiv2_1 = widthDiv2 - 1;
+        for (int x = (int) Math.floor(-widthDiv2); x <= widthDiv2_1; x++) {
+            for (int y = (int) Math.floor(-widthDiv2); y <= widthDiv2_1; y++) {
                 if (v2 == 0) {
                     // try all the Z's
-                    for (int z = (int) Math.floor(-widthDiv2); z <= widthDiv2 - 1; z++) {
+                    for (int z = (int) Math.floor(-widthDiv2); z <= widthDiv2_1; z++) {
                         final double highPoint = (x + 1) * v0 + (y + 1) * v1;
                         final double lowPoint = x * v0 + y * v1;
                         if (lowPoint < 0) {

@@ -1,6 +1,7 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.tree.trunk.creation.utils.GetRotations;
+import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.creation.utils.TrailingSteps;
 import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import apple.trees.tree.trunk.data.TreeArray;
@@ -16,12 +17,14 @@ public class BranchStep {
     private int branchAngle;
     private double branchStealing;
     private int branchesMean;
+    private double decayRate;
 
-    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random) {
+    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate) {
         this.branchAngle = branchAngle;
         this.branchStealing = branchStealing;
         this.branchesMean = branchesMean;
         this.random = random;
+        this.decayRate = decayRate;
     }
 
 
@@ -52,6 +55,10 @@ public class BranchStep {
 
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
+        double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
+        // todo
+        if (newWidth < 0.5)
+            return new ArrayList<>(1);
         // get all the different rotations //todo change arrayList to an arraylist of weights
         Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchesToBuild, new ArrayList<>());
         double x, y, z;
@@ -64,15 +71,15 @@ public class BranchStep {
             y = lastTreeStep.y + newDirection.y;
             z = lastTreeStep.z + newDirection.z;
 
+
             //todo maybe slope of (0,0,0) should be somefin else
-            // todo last width should be changed to the new width
-            branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), lastWidth));
+            branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), newWidth));
 
             // make a list of the locations for the next full step
             ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(newDirection, lastStepLocation);
             // put all the trailings in the tree
             for (Vec3d loc : locations) {
-                tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, lastWidth);
+                tree.put(loc.x, loc.y, loc.z, newDirection, lastSlopeOfSlope, newWidth);
             }
         }
 

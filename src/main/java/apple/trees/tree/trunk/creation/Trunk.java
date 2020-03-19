@@ -74,7 +74,7 @@ public class Trunk {
         leanLikelihood = 3;
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
-        decayRate = .1;
+        decayRate = .3;
         branchingChance = .4;
         branchesMean = 4;
         branchAngle = 20;
