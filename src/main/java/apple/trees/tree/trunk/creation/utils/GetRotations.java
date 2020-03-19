@@ -48,9 +48,6 @@ public class GetRotations {
         for (int i = 0; i < branchesToBuild; i++) {
             Vec3d vec1 = oldRot.get(i);
             Vec3d vec2 = rotations.get(i);
-            System.out.println(String.format("Old Rot: x:%f,y:%f,z:%f", vec1.x, vec1.y, vec1.z));
-            System.out.println(String.format("New Rot: x:%f,y:%f,z:%f", vec2.x, vec2.y, vec2.z));
-            System.out.println("\n");
 
         }
         // reduce the rotations into a cone

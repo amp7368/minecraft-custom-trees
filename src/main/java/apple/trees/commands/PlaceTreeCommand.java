@@ -49,7 +49,7 @@ public class PlaceTreeCommand implements CommandExecutor {
         return false;
     }
 
-    private static void placeTree(TreeArray tree, Location location) {
+    public static void placeTree(TreeArray tree, Location location) {
         // the starting location where tree should be placed
         int startX = location.getBlockX();
         int startY = location.getBlockY();
@@ -64,8 +64,16 @@ public class PlaceTreeCommand implements CommandExecutor {
         for (int x = startX, xorig = 0; xorig < sizeX; x++, xorig++) {
             for (int y = startY, yorig = 0; yorig < sizeY; y++, yorig++) {
                 for (int z = startZ, zorig = 0; zorig < sizeZ; z++, zorig++) {
-                    if (tree.get(xorig, yorig, zorig) != null)
-                        world.getBlockAt(x, y, z).setType(Material.BIRCH_WOOD);
+                    if (tree.get(xorig, yorig, zorig) != null) {
+                        Material material;
+                        double width = tree.get(xorig, yorig, zorig).width;
+                        if (width < 1) material = Material.BIRCH_WOOD;
+                        else if (width < 2) material = Material.ACACIA_WOOD;
+                        else if (width < 3) material = Material.OAK_WOOD;
+                        else if (width < 4) material = Material.SPRUCE_WOOD;
+                        else material = Material.DARK_OAK_WOOD;
+                        world.getBlockAt(x, y, z).setType(material);
+                    }
                 }
             }
         }

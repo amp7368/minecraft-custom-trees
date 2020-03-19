@@ -1,9 +1,12 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.YMLNavigate;
+import apple.trees.commands.PlaceTreeCommand;
 import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -87,8 +90,30 @@ public class Trunk {
     public TreeArray makeTrunk() {
         BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
         return Widthify.addWidth(baseTrunk.createBaseTrunk());
-
+//        return baseTrunk.createBaseTrunk();
     }
+
+    public void makeTrunkTesting(Location location) {
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
+        TreeArray tree = baseTrunk.createBaseTrunk();
+        TreeArray widthTree = Widthify.addWidth(tree);
+        PlaceTreeCommand.placeTree(widthTree, location);
+        location.setX(location.getX() - 50);
+        PlaceTreeCommand.placeTree(tree, location);
+        System.out.println("finished tree");
+    }
+
+    public void makeTrunkTesting() {
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
+        TreeArray tree = baseTrunk.createBaseTrunk();
+        tree.print();
+        System.out.println("added in width");
+        TreeArray widthTree = Widthify.addWidth(tree);
+        System.out.println("widthTree:");
+        widthTree.print();
+        System.out.println("finished tree");
+    }
+
 
     //todo do input validation
     public Trunk setTrunk_width(int trunk_width) {

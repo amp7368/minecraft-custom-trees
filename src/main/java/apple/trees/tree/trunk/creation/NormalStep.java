@@ -75,6 +75,6 @@ public class NormalStep {
         }
         tree.put(xFine, yFine, zFine, newDirection, newSlopeOfSlope, newWidth);
 
-        return new TreeStep(xBroad, yBroad, zBroad, newDirection, newSlopeOfSlope, newWidth);
+        return tree.get(xBroad, yBroad, zBroad);
     }
 }

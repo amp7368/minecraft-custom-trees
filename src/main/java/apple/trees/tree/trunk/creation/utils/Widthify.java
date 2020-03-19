@@ -23,7 +23,9 @@ public class Widthify {
                 for (int z = 0; z < sizeZ; z++) {
                     TreeStep block = tree.get(x, y, z);
                     if (block != null) {
-                        addWidthStep(newTree, block);
+                        if (block.width > 1) {
+                            addWidthStep(newTree, block);
+                        }
                         newTree.put(block);
                     }
                 }
@@ -47,17 +49,17 @@ public class Widthify {
         double v0 = block.direction.x;
         double v1 = block.direction.y;
         double v2 = block.direction.z;
-        int x0 = block.x;
-        int y0 = block.y;
-        int z0 = block.z;
+        int x0 = (int) block.x;
+        int y0 = (int) block.y;
+        int z0 = (int) block.z;
         ArrayList<Vec3d> list = new ArrayList<>();
 
         double widthDiv2_1 = widthDiv2 - 1;
-        for (int x = (int) Math.floor(-widthDiv2); x <= widthDiv2_1; x++) {
-            for (int y = (int) Math.floor(-widthDiv2); y <= widthDiv2_1; y++) {
-                if (v2 == 0) {
+        for (int x = (int) Math.floor(-widthDiv2); x <= widthDiv2_1+.5; x++) {
+            for (int y = (int) Math.floor(-widthDiv2); y <= widthDiv2_1+.5; y++) {
+                if (v2 <= .2) {
                     // try all the Z's
-                    for (int z = (int) Math.floor(-widthDiv2); z <= widthDiv2_1; z++) {
+                    for (int z = (int) Math.floor(-widthDiv2); z <= widthDiv2_1+.5; z++) {
                         final double highPoint = (x + 1) * v0 + (y + 1) * v1;
                         final double lowPoint = x * v0 + y * v1;
                         if (lowPoint < 0) {
@@ -81,21 +83,22 @@ public class Widthify {
                     double highZ = (-(x + 1) * v0 - (y + 1) * v1) / v2;
 
                     // convert lowZ to the lowest magnitude it could be
-                    boolean wasNegative = false;
-                    if (lowZ < 0)
-                        wasNegative = true;
+                    boolean wasNegative = lowZ < 0;
                     lowZ = Math.min(Math.abs(lowZ), widthDiv2);
                     if (wasNegative)
                         lowZ = -lowZ;
 
                     // convert highZ to the lowest magnitude it could be
-                    wasNegative = false;
-                    if (highZ < 0)
-                        wasNegative = true;
+                    wasNegative = highZ < 0;
                     highZ = Math.min(Math.abs(highZ), widthDiv2);
-                    if (wasNegative)
+                    if (wasNegative) {
                         highZ = -highZ;
-
+                        highZ -= .2;
+                        lowZ += .2;
+                    } else {
+                        highZ += .2;
+                        lowZ -= .2;
+                    }
                     if (lowZ < highZ) {
                         // go from lowZ to highZ
                         for (int z = (int) Math.floor(lowZ); z <= highZ; z++) {
@@ -109,11 +112,7 @@ public class Widthify {
                             list.add(new Vec3d(x + x0, y + y0, z + z0));
                         }
                     }
-
-
                 }
-
-
             }
         }
 

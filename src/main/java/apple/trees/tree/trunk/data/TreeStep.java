@@ -3,9 +3,9 @@ package apple.trees.tree.trunk.data;
 import com.sun.javafx.geom.Vec3d;
 
 public class TreeStep {
-    public int x;
-    public int y;
-    public int z;
+    public double x;
+    public double y;
+    public double z;
     public Vec3d direction;
     public Vec3d slopeOfSlope;
     public double width;
@@ -19,7 +19,7 @@ public class TreeStep {
      * @param direction    the current slope
      * @param slopeOfSlope the current acceleration
      */
-    public TreeStep(int x, int y, int z, Vec3d direction, Vec3d slopeOfSlope, double width) {
+    public TreeStep(double x, double y, double z, Vec3d direction, Vec3d slopeOfSlope, double width) {
         this.x = x;
         this.y = y;
         this.z = z;

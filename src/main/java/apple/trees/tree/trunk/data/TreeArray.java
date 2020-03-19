@@ -27,7 +27,10 @@ public class TreeArray {
      * @return the step at that location
      */
     public TreeStep get(int x, int y, int z) {
-        return tree[x][y][z];
+        if (x < sizeX() && y < sizeY() && z < sizeZ() && 0 <= x && 0 <= y && 0 <= z)
+            return tree[x][y][z];
+        System.out.println("oof");
+        return null;
     }
 
     /**
@@ -40,7 +43,7 @@ public class TreeArray {
         int broadY = (int) block.y;
         int broadZ = (int) block.z;
         if (broadX < sizeX() && broadY < sizeY() && broadZ < sizeZ() && broadX >= 0 && broadY >= 0 && broadZ >= 0) {
-            TreeStep newStep = new TreeStep(broadX, broadY, broadZ, block.direction, block.slopeOfSlope, block.width);
+            TreeStep newStep = new TreeStep(block.x, block.y, block.z, block.direction, block.slopeOfSlope, block.width);
             tree[broadX][broadY][broadZ] = newStep;
         }
     }
@@ -60,14 +63,8 @@ public class TreeArray {
         int broadY = (int) y;
         int broadZ = (int) z;
         if (x < sizeX() && y < sizeY() && z < sizeZ() && x >= 0 && y >= 0 && z >= 0) {
-            if (x != broadX && y != broadY && z != broadZ) {
-                ArrayList<Vec3d> locations = getNearbySquares(broadX, broadY, broadZ, x, y, z);
-                for (Vec3d loc : locations) {
-                    tree[broadX][broadY][broadZ] = new TreeStep((int) loc.x, (int) loc.y, (int) loc.z, direction, slopeOfSlope, width);
-                }
-            }
             if (tree[broadX][broadY][broadZ] == null) {
-                TreeStep step = new TreeStep(broadX, broadY, broadZ, direction, slopeOfSlope, width);
+                TreeStep step = new TreeStep(x, y, z, direction, slopeOfSlope, width);
                 tree[broadX][broadY][broadZ] = step;
                 return step;
             } else {
@@ -292,4 +289,16 @@ public class TreeArray {
     }
 
 
+    public void print() {
+        for (int x = 0; x < sizeX(); x++) {
+            for (int y = 0; y < sizeY(); y++) {
+                for (int z = 0; z < sizeZ(); z++) {
+                    TreeStep block = get(x, y, z);
+                    if (block != null) {
+                        System.out.println(String.format("x:%d, y:%d, z:%d", x, y, z));
+                    }
+                }
+            }
+        }
+    }
 }

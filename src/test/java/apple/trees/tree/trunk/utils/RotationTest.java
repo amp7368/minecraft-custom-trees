@@ -15,10 +15,11 @@ public class RotationTest {
         ArrayList<Double> weights = new ArrayList<>();
         weights.add(5.0);
         weights.add(2.0);
+        weights.add(2.0);
+        weights.add(2.0);
+        weights.add(2.0);
+        weights.add(2.0);
         Collection<Vec3d> rotations = GetRotations.rotationFullFromDomain(30, weights);
-        for (Vec3d vec : rotations) {
-            System.out.println(String.format("x:%f,y:%f,z:%f", vec.x, vec.y, vec.z));
-        }
 
         System.out.print("\nBase Vec: ");
         printVec(baseVec);
