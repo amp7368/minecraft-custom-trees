@@ -12,6 +12,7 @@ import java.io.File;
 
 public class Trunk {
 
+    public static final Double MIN_STEP_SIZE = 0.5;
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;

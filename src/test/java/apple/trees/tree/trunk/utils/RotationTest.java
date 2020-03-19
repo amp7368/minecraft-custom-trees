@@ -12,15 +12,17 @@ public class RotationTest {
     public static void rotationTest() {
         GetRotations.initialize(new Random());
         Vec3d baseVec = new Vec3d(0, 1, 0);
-//        Collection<Vec3d> rotations = GetRotations.rotationFullFromDomain(30, 2, new ArrayList<>());
-        ArrayList<Vec3d> rotations = new ArrayList<>();
+        ArrayList<Double> weights = new ArrayList<>();
+        weights.add(5.0);
+        weights.add(2.0);
+        Collection<Vec3d> rotations = GetRotations.rotationFullFromDomain(30, weights);
+        for (Vec3d vec : rotations) {
+            System.out.println(String.format("x:%f,y:%f,z:%f", vec.x, vec.y, vec.z));
+        }
+
         System.out.print("\nBase Vec: ");
         printVec(baseVec);
         System.out.println();
-        rotations.add(new Vec3d(0, 0, 30));
-        rotations.add(new Vec3d(0, 30, 0));
-        rotations.add(new Vec3d(30, 0, 0));
-        rotations.add(new Vec3d(0, 0, 0));
         for (Vec3d vec : rotations) {
             System.out.print("Rotate by: ");
             printVec(vec);

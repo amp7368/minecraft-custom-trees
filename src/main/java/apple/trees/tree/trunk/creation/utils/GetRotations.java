@@ -1,5 +1,6 @@
 package apple.trees.tree.trunk.creation.utils;
 
+import apple.trees.tree.trunk.creation.Trunk;
 import com.mysql.fabric.xmlrpc.base.Array;
 import com.sun.javafx.geom.Vec3d;
 import org.bukkit.Rotation;
@@ -20,19 +21,99 @@ public class GetRotations {
     /**
      * get all the rotations that need to be made to make different angled branches
      *
-     * @param branchAngle     the angle at which all the branches should try to follow
-     * @param branchesToBuild the number of branches that need to be made
-     * @param branchWeights   an array of the branches' weights so that we know how greatly they impact each other
+     * @param branchAngle   the angle at which all the branches should try to follow
+     * @param branchWeights an array of the branches' weights so that we know how greatly they impact each other
      * @return a collection of rotations to be made in the x, y, and z.
      */
-    public static Collection<Vec3d> rotationFullFromDomain(double branchAngle, int branchesToBuild, ArrayList<Double> branchWeights) {
-        // get the raw branch angles in a 'double sphere'
-        ArrayList<Vec3d> rotations = branchesFromDomain(branchesToBuild);
+    public static Collection<Vec3d> rotationFullFromDomain(double branchAngle, ArrayList<Double> branchWeights) {
+        // remove unneeded branchWeights
+        int branchesToBuild = branchWeights.size();
+        for (int i = 0; i < branchesToBuild; i++) {
+            if (branchWeights.get(i) < Trunk.MIN_STEP_SIZE) {
+                branchWeights.remove(i--);
+                branchesToBuild--;
+            }
+        }
 
+        // get the raw branch angles in a 'double sphere'
+        ArrayList<Vec3d> rotations;
+        if (branchesToBuild == 0) {
+            rotations = new ArrayList<>();
+            rotations.add(new Vec3d(0, 0, 0));
+        } else {
+            rotations = branchesFromDomain(branchesToBuild);
+        }
+        ArrayList<Vec3d> oldRot = copy(rotations);
+        variate(rotations, branchWeights);
+        for (int i = 0; i < branchesToBuild; i++) {
+            Vec3d vec1 = oldRot.get(i);
+            Vec3d vec2 = rotations.get(i);
+            System.out.println(String.format("Old Rot: x:%f,y:%f,z:%f", vec1.x, vec1.y, vec1.z));
+            System.out.println(String.format("New Rot: x:%f,y:%f,z:%f", vec2.x, vec2.y, vec2.z));
+            System.out.println("\n");
+
+        }
         // reduce the rotations into a cone
         reduceRotations(rotations, branchAngle);
         return rotations;
 
+    }
+
+    private static ArrayList<Vec3d> copy(ArrayList<Vec3d> rotations) {
+        ArrayList<Vec3d> newRot = new ArrayList<>();
+        for (Vec3d vec : rotations) {
+            newRot.add(new Vec3d(vec.x, vec.y, vec.z));
+        }
+        return newRot;
+    }
+
+    private static void variate(ArrayList<Vec3d> rotations, ArrayList<Double> branchWeights) {
+        int branchesToBuild = branchWeights.size();
+        double sum = 0;
+        for (Double weight : branchWeights) {
+            sum += weight;
+        }
+        for (int i = 0; i < branchesToBuild; i++) {
+            double weight = branchWeights.get(i);
+            double changePercentage = random.nextDouble() * weight / sum/sum;
+
+            // center the vec
+            Vec3d vecToCenter = rotations.get(i);
+            double changeInX = vecToCenter.x * changePercentage;
+            double changeInY = vecToCenter.y * changePercentage;
+            double changeInZ = vecToCenter.z * changePercentage;
+            vecToCenter.x -= changeInX;
+            vecToCenter.y -= changeInY;
+            vecToCenter.z -= changeInZ;
+
+            // move all the other vecs
+            for (int j = 0; j < branchesToBuild; j++) {
+                if (i == j)
+                    continue;
+                Vec3d vecToPush = rotations.get(j);
+                Double pushedWeight = branchWeights.get(j);
+                //todo magic number
+                double variation = weight / pushedWeight * .5;
+                vecToPush.x += changeInX * variation;
+                vecToPush.y += changeInY * variation;
+                vecToPush.z += changeInZ * variation;
+                if (vecToPush.x < -360) {
+                    vecToPush.x = -360;
+                } else if (vecToPush.x > 360) {
+                    vecToPush.x = 360;
+                }
+                if (vecToPush.y < -360) {
+                    vecToPush.y = -360;
+                } else if (vecToPush.y > 360) {
+                    vecToPush.y = 360;
+                }
+                if (vecToPush.z < -360) {
+                    vecToPush.z = -360;
+                } else if (vecToPush.z > 360) {
+                    vecToPush.z = 360;
+                }
+            }
+        }
     }
 
     /**

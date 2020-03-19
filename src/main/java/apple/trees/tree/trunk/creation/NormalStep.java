@@ -35,7 +35,7 @@ public class NormalStep {
         // get the width of the newStep
         double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
         // todo magic value
-        if (newWidth < .5)
+        if (newWidth < Trunk.MIN_STEP_SIZE)
             return null;
 
         // get the location of the newStep

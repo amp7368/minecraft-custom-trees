@@ -8,6 +8,7 @@ import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -56,11 +57,26 @@ public class BranchStep {
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
         double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
-        // todo
-        if (newWidth < 0.5)
+
+        // if this branch shouldn't exist, return a collection of no branches
+        if (newWidth < Trunk.MIN_STEP_SIZE)
             return new ArrayList<>(1);
-        // get all the different rotations //todo change arrayList to an arraylist of weights
-        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchesToBuild, new ArrayList<>());
+
+        // get an arrayList of weights of size branchesToBuild
+        ArrayList<Double> branchWeights = new ArrayList<>(branchesToBuild);
+        for (int i = 0; i < branchesToBuild; i++) {
+            branchWeights.add(random.nextDouble());
+        }
+        double sum = 0;
+        for (Double weight : branchWeights) {
+            sum += weight;
+        }
+        for (int i = 0; i < branchesToBuild; i++) {
+            branchWeights.set(i, branchWeights.get(i) / sum * branchesToBuild * newWidth);
+        }
+
+        // get all the different rotations
+        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchWeights);
         double x, y, z;
         // go through each rotation and make a branch for it
         for (Vec3d rotation : rotationAmounts) {
