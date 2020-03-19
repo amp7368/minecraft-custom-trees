@@ -23,8 +23,8 @@ public class NormalStep {
      * get the next tree step from what was given about the last tree step
      * add any steps to the tree
      *
-     * @param tree           the entire tree and all the steps within it
-     * @param lastTreeStep   the tree step that was last created
+     * @param tree         the entire tree and all the steps within it
+     * @param lastTreeStep the tree step that was last created
      * @return the new main step in the tree
      */
     protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep) {
@@ -32,6 +32,11 @@ public class NormalStep {
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
+        // get the width of the newStep
+        double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
+        // todo magic value
+        if (newWidth < .5)
+            return null;
 
         // get the location of the newStep
 
@@ -61,8 +66,6 @@ public class NormalStep {
         // get slopeOfSlope of the newStep
         Vec3d newSlopeOfSlope = RandomChange.getRandomChangeSlopeOfSlope(lastSlopeOfSlope, leanMagnitude, leanLikelihood);
 
-        // get the width of the newStep
-        double newWidth = RandomChange.getRandomChangeWidth(lastWidth, decayRate);
 
         // make a list of the locations for the next full step
         ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));

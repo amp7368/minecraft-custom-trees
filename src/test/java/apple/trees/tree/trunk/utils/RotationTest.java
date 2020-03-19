@@ -1,7 +1,6 @@
 package apple.trees.tree.trunk.utils;
 
 import apple.trees.tree.trunk.creation.utils.GetRotations;
-import apple.trees.tree.trunk.creation.utils.RotationPresets;
 import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import com.sun.javafx.geom.Vec3d;
 
@@ -12,7 +11,6 @@ import java.util.Random;
 public class RotationTest {
     public static void rotationTest() {
         GetRotations.initialize(new Random());
-        RotationPresets.initialize(new Random());
         Vec3d baseVec = new Vec3d(0, 1, 0);
 //        Collection<Vec3d> rotations = GetRotations.rotationFullFromDomain(30, 2, new ArrayList<>());
         ArrayList<Vec3d> rotations = new ArrayList<>();

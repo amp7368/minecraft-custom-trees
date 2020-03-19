@@ -7,3 +7,5 @@ description: Rewards players that build with points
 commands:
   place_tree:
     description: creates a tre
+  place_vector:
+    description: just for testing

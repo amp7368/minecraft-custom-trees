@@ -31,6 +31,21 @@ public class TreeArray {
     }
 
     /**
+     * places a treeStep where the last treeStep was
+     *
+     * @param block the old TreeStep
+     */
+    public void put(TreeStep block) {
+        int broadX = (int) block.x;
+        int broadY = (int) block.y;
+        int broadZ = (int) block.z;
+        if (broadX < sizeX() && broadY < sizeY() && broadZ < sizeZ() && broadX >= 0 && broadY >= 0 && broadZ >= 0) {
+            TreeStep newStep = new TreeStep(broadX, broadY, broadZ, block.direction, block.slopeOfSlope, block.width);
+            tree[broadX][broadY][broadZ] = newStep;
+        }
+    }
+
+    /**
      * places a treeStep at that loc
      *
      * @param x            the current x index
@@ -275,4 +290,6 @@ public class TreeArray {
         }
         return locations;
     }
+
+
 }

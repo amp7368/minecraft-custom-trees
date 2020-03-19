@@ -1,6 +1,7 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.YMLNavigate;
+import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,6 +22,7 @@ public class Trunk {
     private double branchingChance;
     private int branchesMean;
     private int branchAngle;
+
     /**
      * creates a Trunk with default values
      * todo make a yml with different default values
@@ -37,7 +39,7 @@ public class Trunk {
      */
     public Trunk(String treeType, JavaPlugin plugin) {
         File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, treeType, ".yml"));
-        if (file.exists()) {
+        if (!file.exists()) {
             setDefaultValues();
             System.out.println(String.format("there is no tree that exists with name: %s", treeType));
             return;
@@ -72,8 +74,8 @@ public class Trunk {
         leanLikelihood = 3;
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
-        decayRate = .05;
-        branchingChance = .07;
+        decayRate = .3;
+        branchingChance = .4;
         branchesMean = 4;
         branchAngle = 20;
     }
@@ -82,8 +84,9 @@ public class Trunk {
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean,branchAngle);
-        return baseTrunk.createBaseTrunk();
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
+        return Widthify.addWidth(baseTrunk.createBaseTrunk());
+
     }
 
     //todo do input validation
