@@ -13,4 +13,10 @@ public class YMLNavigate {
     public static final String BRANCHES_MEAN = "branchesMean";
     public static final String MAX_LEAN = "maxLean";
     public static final String BRANCH_ANGLE = "branchAngle";
+
+    public static final String FORMULAS = "formulas";
+    public static final String BRANCHING_CHANCE_MEAN = "branchingChanceMean";
+    public static final String BRANCHING_CHANCE_SD = "branchingChanceStandardDeviation";
+    public static final String WIDTH_DECAY_MEAN = "widthDecayMean";
+    public static final String WIDTH_DECAY_SD = "widthStandardDeviation";
 }

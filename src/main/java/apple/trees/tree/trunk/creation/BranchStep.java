@@ -19,13 +19,15 @@ public class BranchStep {
     private double branchStealing;
     private int branchesMean;
     private double decayRate;
+    private RandomChange randomChange;
 
-    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate) {
+    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate, RandomChange randomChange) {
         this.branchAngle = branchAngle;
         this.branchStealing = branchStealing;
         this.branchesMean = branchesMean;
         this.random = random;
         this.decayRate = decayRate;
+        this.randomChange = randomChange;
     }
 
 
@@ -56,7 +58,7 @@ public class BranchStep {
 
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
-        double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
+        double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth, decayRate);
 
         // if this branch shouldn't exist, return a collection of no branches
         if (newWidth < Trunk.MIN_STEP_SIZE)

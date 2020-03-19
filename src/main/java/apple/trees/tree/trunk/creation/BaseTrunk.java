@@ -5,6 +5,7 @@ import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
+import org.bukkit.block.data.type.Bell;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import java.util.Random;
 
 public class BaseTrunk {
     private static final int MAX_COMPLETED_STEPS = 1000;
-    private static final double BELL_CURVE_A = .2;
-    private static final double BELL_CURVE_B = .4;
-    private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
+    private double branchingChanceSD = .2;
+    private double branchingChanceMean = .4;
+    private double BELL_CURVE_LEFT;
     private final int branchAngle;
     private final double branchStealing;
     private int trunk_width;
@@ -26,10 +27,13 @@ public class BaseTrunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
-    private static Random random;
+    private Random random;
     private Vec3d startDirection;
+    private RandomChange randomChange;
 
-    public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean, Vec3d leanStart, double decayRate, double branchingChance, int branchesMean, int branchAngle) {
+    public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean,
+                     Vec3d leanStart, double decayRate, double branchingChance, int branchesMean, int branchAngle,
+                     double branchingChanceSD, double branchingChanceMean, RandomChange randomChange, Random random) {
         this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
@@ -41,14 +45,13 @@ public class BaseTrunk {
         this.branchingChance = branchingChance;
         this.branchesMean = branchesMean;
         this.branchAngle = branchAngle;
+        this.randomChange = randomChange;
+        this.branchingChanceSD = branchingChanceSD;
+        this.branchingChanceMean = branchingChanceMean;
+        this.random = random;
+        BELL_CURVE_LEFT = 1 / (branchingChanceSD * Math.sqrt(2 * Math.PI));
         this.branchStealing = .5;
         //todo ^^^
-    }
-
-    public static void initialize() {
-        random = new Random();
-        RandomChange.initialize(random);
-        GetRotations.initialize(random);
     }
 
     /**
@@ -61,7 +64,7 @@ public class BaseTrunk {
 
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree));
-        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random,decayRate);
+        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random, decayRate, randomChange);
         NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate);
         TreeStep lastTreeStep;
         // loop until all the ends are finished
@@ -90,7 +93,7 @@ public class BaseTrunk {
             if (random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {
-                currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep);
+                currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep, randomChange);
                 lastTreeSteps.add(currentTreeStep);
             }
         }
@@ -99,8 +102,8 @@ public class BaseTrunk {
     }
 
     private double getBranchingChance(double width) {
-        return branchingChance * BELL_CURVE_LEFT * Math.pow(Math.E, -0.5 * (Math.pow(width - BELL_CURVE_B, 2))
-                / Math.pow(BELL_CURVE_A, 2));
+        return branchingChance * BELL_CURVE_LEFT * Math.pow(Math.E, -0.5 * (Math.pow(width - branchingChanceMean, 2))
+                / Math.pow(branchingChanceSD, 2));
     }
 
     /**

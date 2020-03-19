@@ -2,6 +2,8 @@ package apple.trees.tree.trunk.creation;
 
 import apple.trees.YMLNavigate;
 import apple.trees.commands.PlaceTreeCommand;
+import apple.trees.tree.trunk.creation.utils.GetRotations;
+import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
@@ -12,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Random;
 
 public class Trunk {
 
@@ -27,12 +30,20 @@ public class Trunk {
     private int branchesMean;
     private int branchAngle;
 
+    private RandomChange randomChange;
+    private Random random = new Random();
+    private double branchingChanceMean;
+    private double branchingChanceStandardDeviation;
+    private double widthDecayMean;
+    private double widthDecayStandardDeviation;
+
     /**
      * creates a Trunk with default values
      * todo make a yml with different default values
      */
     public Trunk() {
         setDefaultValues();
+        GetRotations.initialize(random);
     }
 
     /**
@@ -42,6 +53,7 @@ public class Trunk {
      * @param plugin   the plugin so we can get the plugin folder
      */
     public Trunk(String treeType, JavaPlugin plugin) {
+        GetRotations.initialize(random);
         File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, treeType, ".yml"));
         if (!file.exists()) {
             setDefaultValues();
@@ -66,6 +78,14 @@ public class Trunk {
         branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
         branchAngle = config.getInt(YMLNavigate.BRANCH_ANGLE);
+
+        config = configOrig.getConfigurationSection(YMLNavigate.FORMULAS);
+        assert config != null;
+        branchingChanceMean = config.getDouble(YMLNavigate.BRANCHING_CHANCE_MEAN);
+        branchingChanceStandardDeviation = config.getDouble(YMLNavigate.BRANCHING_CHANCE_SD);
+        widthDecayMean = config.getDouble(YMLNavigate.WIDTH_DECAY_MEAN);
+        widthDecayStandardDeviation = config.getDouble(YMLNavigate.WIDTH_DECAY_SD);
+        randomChange = new RandomChange(random, widthDecayStandardDeviation, widthDecayMean);
     }
 
     /**
@@ -82,38 +102,23 @@ public class Trunk {
         branchingChance = .4;
         branchesMean = 4;
         branchAngle = 20;
+        branchingChanceMean = 0.5;
+        branchingChanceStandardDeviation = 0.3;
+        widthDecayMean = 0.41;
+        widthDecayStandardDeviation = 0.2;
+        randomChange = new RandomChange(random, widthDecayStandardDeviation, widthDecayMean);
     }
 
     /**
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
+
+        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart,
+                decayRate, branchingChance, branchesMean, branchAngle, branchingChanceStandardDeviation, branchingChanceMean, randomChange, random);
         return Widthify.addWidth(baseTrunk.createBaseTrunk());
 //        return baseTrunk.createBaseTrunk();
     }
-
-    public void makeTrunkTesting(Location location) {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
-        TreeArray tree = baseTrunk.createBaseTrunk();
-        TreeArray widthTree = Widthify.addWidth(tree);
-        PlaceTreeCommand.placeTree(widthTree, location);
-        location.setX(location.getX() - 50);
-        PlaceTreeCommand.placeTree(tree, location);
-        System.out.println("finished tree");
-    }
-
-    public void makeTrunkTesting() {
-        BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart, decayRate, branchingChance, branchesMean, branchAngle);
-        TreeArray tree = baseTrunk.createBaseTrunk();
-        tree.print();
-        System.out.println("added in width");
-        TreeArray widthTree = Widthify.addWidth(tree);
-        System.out.println("widthTree:");
-        widthTree.print();
-        System.out.println("finished tree");
-    }
-
 
     //todo do input validation
     public Trunk setTrunk_width(int trunk_width) {

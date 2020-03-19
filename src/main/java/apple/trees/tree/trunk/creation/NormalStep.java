@@ -25,15 +25,16 @@ public class NormalStep {
      *
      * @param tree         the entire tree and all the steps within it
      * @param lastTreeStep the tree step that was last created
+     * @param randomChange is the randomChange object to give random changes based on the treeType
      * @return the new main step in the tree
      */
-    protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep) {
+    protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, RandomChange randomChange) {
         Vec3d lastDirection = lastTreeStep.direction;
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
         // get the width of the newStep
-        double newWidth = lastWidth - RandomChange.getRandomChangeWidth(lastWidth, decayRate);
+        double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth, decayRate);
         // todo magic value
         if (newWidth < Trunk.MIN_STEP_SIZE)
             return null;
@@ -64,7 +65,7 @@ public class NormalStep {
         Vec3d newDirection = new Vec3d(newDirectionX, newDirectionY, newDirectionZ);
 
         // get slopeOfSlope of the newStep
-        Vec3d newSlopeOfSlope = RandomChange.getRandomChangeSlopeOfSlope(lastSlopeOfSlope, leanMagnitude, leanLikelihood);
+        Vec3d newSlopeOfSlope = randomChange.getRandomChangeSlopeOfSlope(lastSlopeOfSlope, leanMagnitude, leanLikelihood);
 
 
         // make a list of the locations for the next full step

@@ -1,20 +1,27 @@
 package apple.trees.tree.trunk.creation.utils;
 
+import apple.trees.YMLNavigate;
 import com.sun.javafx.geom.Vec3d;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Random;
 
 public class RandomChange {
 
     // this is the normal curve that suits us best
-    private static final double BELL_CURVE_A = .3;
-    private static final double BELL_CURVE_B = .5;
-    private static final double BELL_CURVE_LEFT = 1 / (BELL_CURVE_A * Math.sqrt(2 * Math.PI));
+    private static double bellCurveA = .3;
+    private static double bellCurveB = .5;
+    private static double BELL_CURVE_LEFT;
     private static Random random;
 
-    public static void initialize(Random rand) {
+    public RandomChange(Random rand, double standardDeviation, double mean) {
         random = rand;
+        bellCurveA = standardDeviation;
+        bellCurveB = mean;
+        BELL_CURVE_LEFT = 1 / (bellCurveA * Math.sqrt(2 * Math.PI));
     }
 
     /**
@@ -25,13 +32,13 @@ public class RandomChange {
      * @param decayRate what the decay rate is
      * @return a number according to a bell curve with the height of about decay rate
      */
-    public static double getRandomChangeWidth(double lastWidth, double decayRate) {
+    public double getRandomChangeWidth(double lastWidth, double decayRate) {
         return lastWidth * decayRate * BELL_CURVE_LEFT * Math.pow(
-                Math.E, -0.5 * (Math.pow(random.nextDouble() - BELL_CURVE_B, 2)
-                        / Math.pow(BELL_CURVE_A, 2)));
+                Math.E, -0.5 * (Math.pow(random.nextDouble() - bellCurveB, 2)
+                        / Math.pow(bellCurveA, 2)));
     }
 
-    public static Vec3d getRandomChangeSlopeOfSlope(Vec3d lastSlopeOfSlope, double leanMagnitude, double leanLikelihood) {
+    public Vec3d getRandomChangeSlopeOfSlope(Vec3d lastSlopeOfSlope, double leanMagnitude, double leanLikelihood) {
         // todo use leanLikelihood
         // get the magnitude of change of slope
         double newLeanMagnitude = random.nextDouble() * leanMagnitude;
