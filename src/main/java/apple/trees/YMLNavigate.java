@@ -19,4 +19,6 @@ public class YMLNavigate {
     public static final String BRANCHING_CHANCE_SD = "branchingChanceStandardDeviation";
     public static final String WIDTH_DECAY_MEAN = "widthDecayMean";
     public static final String WIDTH_DECAY_SD = "widthStandardDeviation";
+    public static final String MATERIAL = "material";
+    public static final String BRANCH_MAX_WIDTH = "branchMaxWidth";
 }

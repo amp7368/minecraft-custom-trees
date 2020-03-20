@@ -1,14 +1,11 @@
 package apple.trees.tree.trunk.creation;
 
 import apple.trees.YMLNavigate;
-import apple.trees.commands.PlaceTreeCommand;
 import apple.trees.tree.trunk.creation.utils.GetRotations;
 import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,15 +22,15 @@ public class Trunk {
     private float leanLikelihood;
     private float maxLean;
     private Vec3d leanStart;
-    private double decayRate;
-    private double branchingChance;
     private int branchesMean;
     private int branchAngle;
-
+    private double branchMaxWidth;
     private RandomChange randomChange;
     private Random random = new Random();
+    private double branchingChance;
     private double branchingChanceMean;
     private double branchingChanceStandardDeviation;
+    private double widthDecayRate;
     private double widthDecayMean;
     private double widthDecayStandardDeviation;
 
@@ -74,15 +71,15 @@ public class Trunk {
         double leanStartZ = config.getDouble(YMLNavigate.LEAN_START_Z);
         leanStart = new Vec3d(leanStartX, leanStartY, leanStartZ);
 
-        decayRate = config.getDouble(YMLNavigate.DECAY_RATE);
-        branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
         branchAngle = config.getInt(YMLNavigate.BRANCH_ANGLE);
-
+        branchMaxWidth= config.getDouble(YMLNavigate.BRANCH_MAX_WIDTH);
         config = configOrig.getConfigurationSection(YMLNavigate.FORMULAS);
         assert config != null;
+        branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
         branchingChanceMean = config.getDouble(YMLNavigate.BRANCHING_CHANCE_MEAN);
         branchingChanceStandardDeviation = config.getDouble(YMLNavigate.BRANCHING_CHANCE_SD);
+        widthDecayRate = config.getDouble(YMLNavigate.DECAY_RATE);
         widthDecayMean = config.getDouble(YMLNavigate.WIDTH_DECAY_MEAN);
         widthDecayStandardDeviation = config.getDouble(YMLNavigate.WIDTH_DECAY_SD);
         randomChange = new RandomChange(random, widthDecayStandardDeviation, widthDecayMean);
@@ -98,10 +95,11 @@ public class Trunk {
         leanLikelihood = 3;
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
-        decayRate = .3;
+        widthDecayRate = .3;
         branchingChance = .4;
         branchesMean = 4;
         branchAngle = 20;
+        branchMaxWidth = 3;
         branchingChanceMean = 0.5;
         branchingChanceStandardDeviation = 0.3;
         widthDecayMean = 0.41;
@@ -113,11 +111,9 @@ public class Trunk {
      * creates a random trunk with the specified options
      */
     public TreeArray makeTrunk() {
-
         BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart,
-                decayRate, branchingChance, branchesMean, branchAngle, branchingChanceStandardDeviation, branchingChanceMean, randomChange, random);
+                widthDecayRate, branchingChance, branchesMean, branchAngle,branchMaxWidth, branchingChanceStandardDeviation, branchingChanceMean, randomChange, random);
         return Widthify.addWidth(baseTrunk.createBaseTrunk());
-//        return baseTrunk.createBaseTrunk();
     }
 
     //todo do input validation
@@ -151,8 +147,8 @@ public class Trunk {
         return this;
     }
 
-    public Trunk setDecayRate(double decayRate) {
-        this.decayRate = decayRate;
+    public Trunk setWidthDecayRate(double widthDecayRate) {
+        this.widthDecayRate = widthDecayRate;
         return this;
     }
 

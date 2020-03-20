@@ -18,6 +18,7 @@ public class BaseTrunk {
     private double BELL_CURVE_LEFT;
     private final int branchAngle;
     private final double branchStealing;
+    private double branchMaxWidth;
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;
@@ -33,7 +34,7 @@ public class BaseTrunk {
 
     public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean,
                      Vec3d leanStart, double decayRate, double branchingChance, int branchesMean, int branchAngle,
-                     double branchingChanceSD, double branchingChanceMean, RandomChange randomChange, Random random) {
+                     double branchMaxWidth, double branchingChanceSD, double branchingChanceMean, RandomChange randomChange, Random random) {
         this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
@@ -42,6 +43,7 @@ public class BaseTrunk {
         this.maxLean = maxLean;
         this.leanStart = leanStart;
         this.decayRate = decayRate;
+        this.branchMaxWidth = branchMaxWidth;
         this.branchingChance = branchingChance;
         this.branchesMean = branchesMean;
         this.branchAngle = branchAngle;
@@ -90,7 +92,7 @@ public class BaseTrunk {
 
             // do either a branch or a normal step
             TreeStep currentTreeStep;
-            if (random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
+            if (lastTreeStep.width<branchMaxWidth && random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
                 lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
             } else {
                 currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep, randomChange);
@@ -102,6 +104,7 @@ public class BaseTrunk {
     }
 
     private double getBranchingChance(double width) {
+        System.out.println(width);
         return branchingChance * BELL_CURVE_LEFT * Math.pow(Math.E, -0.5 * (Math.pow(width - branchingChanceMean, 2))
                 / Math.pow(branchingChanceSD, 2));
     }

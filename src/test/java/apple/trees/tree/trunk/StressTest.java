@@ -12,7 +12,6 @@ import java.util.Random;
 public class StressTest {
 
     public static void main(String[] args) {
-        BaseTrunk.initialize();
 //        WidthifyTest.widthifyTest();
 //        RotationTest.rotationTest();
         (new Trunk()).makeTrunk();
