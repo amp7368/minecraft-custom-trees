@@ -33,8 +33,11 @@ public class NormalStep {
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
+        // get the magnitude of the direction vector
+        double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
+
         // get the width of the newStep
-        double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth, decayRate);
+        double newWidth = lastWidth - magnitude * randomChange.getRandomChangeWidth(lastWidth, decayRate);
         // todo magic value
         if (newWidth < Trunk.MIN_STEP_SIZE)
             return null;

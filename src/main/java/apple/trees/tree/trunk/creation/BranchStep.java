@@ -58,7 +58,7 @@ public class BranchStep {
 
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
 
-        double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth, decayRate);
+        double newWidth = lastWidth - magnitude *randomChange.getRandomChangeWidth(lastWidth, decayRate);
 
         // if this branch shouldn't exist, return a collection of no branches
         if (newWidth < Trunk.MIN_STEP_SIZE)
