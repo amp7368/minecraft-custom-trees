@@ -26,4 +26,9 @@ public class YMLNavigate {
     public static final String RATIO_MODIFIER = "ratioModifier";
     public static final String RATIO = "ratio";
     public static final String BRANCH_WIDTH_MODIFIER = "branchWidthModifier";
+    public static final String FIRST_ANGLES = "firstAngles";
+    public static final String BRANCH = "branch";
+    public static final String ANGLE_X = "angleX";
+    public static final String ANGLE_Y = "angleY";
+    public static final String ANGLE_Z = "angleZ";
 }

@@ -29,9 +29,7 @@ public class Trunk {
     private int branchAngle;
     private double branchMaxWidth;
     private double branchWidthModifier;
-    private int[] firstAngleX;
-    private int[] firstAngleY;
-    private int[] firstAngleZ;
+    private ArrayList<Vec3d> firstAngles;
     private RandomChange randomChange;
     private Random random = new Random();
     private double branchingChance;
@@ -109,25 +107,15 @@ public class Trunk {
             if (config == null) {
                 break;
             }
-            angleXs.add(config.getInt("angleX"));
-            angleYs.add(config.getInt("angleY"));
-            angleZs.add(config.getInt("angleZ"));
-        }
-        //todo optimize
-        firstAngleX = new int[angleXs.size()];
-        for (int i = 0; i < angleXs.size(); i++) {
-            firstAngleX[i] = angleXs.get(i);
-        }
-        firstAngleY = new int[angleYs.size()];
-        for (int i = 0; i < angleYs.size(); i++) {
-            firstAngleY[i] = angleYs.get(i);
-        }
-        firstAngleZ = new int[angleZs.size()];
-        for (int i = 0; i < angleZs.size(); i++) {
-            firstAngleZ[i] = angleZs.get(i);
+            angleXs.add(config.getInt(YMLNavigate.ANGLE_X));
+            angleYs.add(config.getInt(YMLNavigate.ANGLE_Y));
+            angleZs.add(config.getInt(YMLNavigate.ANGLE_Z));
         }
 
-
+        firstAngles = new ArrayList<>(angleXs.size());
+        int size = angleXs.size();
+        for (int i = 0; i < size; i++)
+            firstAngles.add(new Vec3d(angleXs.get(i), angleYs.get(i), angleZs.get(i)));
     }
 
     /**
@@ -161,7 +149,7 @@ public class Trunk {
     public TreeArray makeTrunk() {
         BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart,
                 widthDecayRate, branchingChance, branchesMean, branchAngle, branchMaxWidth, branchingChanceStandardDeviation,
-                branchingChanceMean, branchWidthModifier, leanCoefficent, leanExponent, randomChange, random);
+                branchingChanceMean, branchWidthModifier, firstAngles, leanCoefficent, leanExponent, randomChange, random);
         System.out.println("Made a base trunk");
         return Widthify.addWidth(baseTrunk.createBaseTrunk());
     }
