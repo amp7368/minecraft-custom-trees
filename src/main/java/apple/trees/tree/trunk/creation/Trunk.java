@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Trunk {
 
-    public static final Double MIN_STEP_WIDTH_SIZE = 0.5;
+    public static double MIN_STEP_WIDTH_SIZE;
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;
@@ -40,6 +40,7 @@ public class Trunk {
     private double widthDecayStandardDeviation;
     private double leanCoefficent;
     private double leanExponent;
+    private double ratio;
 
     /**
      * creates a Trunk with default values
@@ -69,6 +70,7 @@ public class Trunk {
         ConfigurationSection config = configOrig.getConfigurationSection("vars");
 
         assert config != null;
+        MIN_STEP_WIDTH_SIZE = config.getDouble(YMLNavigate.MIN_STEP_WIDTH);
         trunk_width = config.getInt(YMLNavigate.TRUNK_WIDTH);
         trunk_height = config.getInt(YMLNavigate.TRUNK_HEIGHT);
         leanLikelihood = (float) config.getDouble(YMLNavigate.LEAN_LIKELIHOOD);
@@ -77,13 +79,13 @@ public class Trunk {
         double leanStartX = config.getDouble(YMLNavigate.LEAN_START_X);
         double leanStartY = config.getDouble(YMLNavigate.LEAN_START_Y);
         double leanStartZ = config.getDouble(YMLNavigate.LEAN_START_Z);
-        leanStart = new Vec3d(leanStartX, leanStartY, leanStartZ);
 
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
         branchAngle = config.getInt(YMLNavigate.BRANCH_ANGLE);
         branchMaxWidth = config.getDouble(YMLNavigate.BRANCH_MAX_WIDTH);
         branchWidthModifier = config.getDouble(YMLNavigate.BRANCH_WIDTH_MODIFIER);
 
+        ratio = config.getInt(YMLNavigate.RATIO);
         config = configOrig.getConfigurationSection(YMLNavigate.FORMULAS);
         assert config != null;
         branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
@@ -116,6 +118,14 @@ public class Trunk {
         int size = angleXs.size();
         for (int i = 0; i < size; i++)
             firstAngles.add(new Vec3d(angleXs.get(i), angleYs.get(i), angleZs.get(i)));
+
+        ConfigurationSection configTesting = configOrig.getConfigurationSection("testing");
+        widthDecayRate /= configTesting.getDouble("widthDecayRateDiv");
+        double r =  configTesting.getDouble("leanStartDiv");
+        leanStart = new Vec3d(leanStartX / r, leanStartY / r, leanStartZ / r);
+        leanMagnitude*=configTesting.getDouble("leanMagnitudeMul");
+        branchWidthModifier /= configTesting.getDouble("branchWidthModifierDiv");
+        MIN_STEP_WIDTH_SIZE /= configTesting.getDouble("minStepWidthDiv");
     }
 
     /**
@@ -141,6 +151,8 @@ public class Trunk {
         leanCoefficent = 2;
         leanExponent = 2;
         randomChange = new RandomChange(random, leanCoefficent, leanExponent, widthDecayStandardDeviation, widthDecayMean);
+        ratio = 1;
+        MIN_STEP_WIDTH_SIZE = 0.25;
     }
 
     /**

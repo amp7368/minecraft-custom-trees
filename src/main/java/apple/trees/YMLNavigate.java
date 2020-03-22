@@ -31,4 +31,5 @@ public class YMLNavigate {
     public static final String ANGLE_X = "angleX";
     public static final String ANGLE_Y = "angleY";
     public static final String ANGLE_Z = "angleZ";
+    public static final String MIN_STEP_WIDTH = "minStepWidth";
 }

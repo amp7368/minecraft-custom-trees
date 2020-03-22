@@ -53,7 +53,7 @@ public class BranchStep {
         double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
         if (magnitude == 0)
             return branchSteps;
-        unitLastDirection6.x = lastDirection.x / magnitude * 6; // todo maybe change the 6 to somefin else? idk it worked so..
+        unitLastDirection6.x = lastDirection.x / magnitude * 6;
         unitLastDirection6.y = lastDirection.y / magnitude * 6;
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
@@ -87,13 +87,12 @@ public class BranchStep {
         for (int i = 0; i < rotationAmountsSize; i++) {
             Vec3d rotation = rotationAmounts.get(i);
             Vec3d newDirection;
-            newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, unitLastDirection6);
+            newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, lastDirection);
 
             x = lastTreeStep.x + newDirection.x;
             y = lastTreeStep.y + newDirection.y;
             z = lastTreeStep.z + newDirection.z;
 
-            //todo maybe slope of (0,0,0) should be somefin else maybe shouldnt be newWidth
             branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), newWidth));
 
             // make a list of the locations for the next full step

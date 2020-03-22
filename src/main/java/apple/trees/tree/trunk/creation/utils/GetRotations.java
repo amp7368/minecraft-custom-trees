@@ -86,7 +86,7 @@ public class GetRotations {
                 Vec3d vecToPush = rotations.get(j);
                 Double pushedWeight = branchWeights.get(j);
                 //todo magic number
-                double variation = weight / pushedWeight * .5;
+                double variation = weight / pushedWeight /2;
                 vecToPush.x += changeInX * variation;
                 vecToPush.y += changeInY * variation;
                 vecToPush.z += changeInZ * variation;

@@ -1,21 +1,18 @@
 package apple.trees.tree.trunk.creation;
 
-import apple.trees.tree.trunk.creation.utils.GetRotations;
 import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.creation.utils.TrailingSteps;
 import apple.trees.tree.trunk.creation.utils.VectorRotation;
 import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
-import org.bukkit.block.data.type.Bell;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
 public class BaseTrunk {
-    private static final int MAX_COMPLETED_STEPS = 1000;
+    private static final int maxCompletedSteps = 1000;
     private double branchingChanceSD = .2;
     private double branchingChanceMean = .4;
     private double BELL_CURVE_LEFT;
@@ -90,7 +87,7 @@ public class BaseTrunk {
             isFirstBranch = false;
         }
         treeStepLoop:
-        for (int currentCompletedSteps = 0; currentCompletedSteps < MAX_COMPLETED_STEPS && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
+        for (int currentCompletedSteps = 0; currentCompletedSteps < maxCompletedSteps && !lastTreeSteps.isEmpty(); currentCompletedSteps++) {
             // get the last step
             lastTreeStep = lastTreeSteps.remove(0);
 
