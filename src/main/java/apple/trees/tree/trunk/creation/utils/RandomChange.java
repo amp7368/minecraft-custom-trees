@@ -24,8 +24,7 @@ public class RandomChange {
     }
 
     /**
-     * todo is this a good estimate?
-     * good to have decay rate about 1/7.5 (bigger decay means bigger result
+     * gets the random change in width (not the new width
      *
      * @param lastWidth what the width used to be
      * @param decayRate what the decay rate is
@@ -39,7 +38,6 @@ public class RandomChange {
 
     public Vec3d getRandomNextSlopeOfSlope(Vec3d lastSlopeOfSlope, double leanMagnitude, double leanLikelihood,
                                            Vec3d lastDirection, Vec3d firstDirection, double width) {
-        // todo use leanLikelihood
         // get the magnitude of change of slope
         double newLeanMagnitude = random.nextDouble() * leanMagnitude;
 

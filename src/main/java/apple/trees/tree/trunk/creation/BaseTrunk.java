@@ -13,11 +13,10 @@ import java.util.Random;
 
 public class BaseTrunk {
     private static final int maxCompletedSteps = 1000;
-    private double branchingChanceSD = .2;
-    private double branchingChanceMean = .4;
+    private double branchingChanceSD;
+    private double branchingChanceMean;
     private double BELL_CURVE_LEFT;
     private final int branchAngle;
-    private final double branchStealing;
     private double branchMaxWidth;
     private int trunk_width;
     private int trunk_height;
@@ -62,8 +61,6 @@ public class BaseTrunk {
         this.leanExponent = leanExponent;
         this.random = random;
         BELL_CURVE_LEFT = 1 / (branchingChanceSD * Math.sqrt(2 * Math.PI));
-        this.branchStealing = .5;
-        //todo ^^^
     }
 
     /**
@@ -76,7 +73,7 @@ public class BaseTrunk {
 
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree));
-        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random, decayRate, branchWidthModifier, randomChange);
+        BranchStep branchStep = new BranchStep(branchAngle, branchesMean, random, decayRate, branchWidthModifier, randomChange);
         NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate, startDirection);
         TreeStep lastTreeStep;
         // loop until all the ends are finished
@@ -122,22 +119,14 @@ public class BaseTrunk {
     }
 
     private Collection<TreeStep> getFirstBranches(TreeArray tree, TreeStep lastTreeStep, ArrayList<Vec3d> rotationAmounts, double startWidth) {
-        //todo use branch grouping size with normal distribution with min of 2
-        int branchesToBuild = firstAngles.size();
-
         ArrayList<TreeStep> branchSteps = new ArrayList<>();
         Vec3d lastDirection = lastTreeStep.direction;
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
-        // make the unit vector of lastDirection
-        Vec3d unitLastDirection6 = new Vec3d();
         double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
         if (magnitude == 0)
             return branchSteps;
-        unitLastDirection6.x = lastDirection.x / magnitude * 6; // todo maybe change the 6 to somefin else? idk it worked so..
-        unitLastDirection6.y = lastDirection.y / magnitude * 6;
-        unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
         double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth / startWidth, decayRate);
         newWidth *= branchWidthModifier;
@@ -152,7 +141,7 @@ public class BaseTrunk {
         // go through each rotation and make a branch for it
         for (Vec3d rotation : rotationAmounts) {
             Vec3d newDirection;
-            newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, unitLastDirection6);
+            newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, lastDirection);
 
             x = lastTreeStep.x + newDirection.x;
             y = lastTreeStep.y + newDirection.y;

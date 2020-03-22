@@ -20,10 +20,10 @@ public class Trunk {
 
     public static double MIN_STEP_WIDTH_SIZE;
     private int trunk_width;
-    private int trunk_height;
+    private int trunk_height; // maybe remove
     private float leanMagnitude;
-    private float leanLikelihood;
-    private float maxLean;
+    private float leanLikelihood; // remove
+    private float maxLean; // remove
     private Vec3d leanStart;
     private int branchesMean;
     private int branchAngle;
@@ -38,13 +38,12 @@ public class Trunk {
     private double widthDecayRate;
     private double widthDecayMean;
     private double widthDecayStandardDeviation;
-    private double leanCoefficent;
-    private double leanExponent;
-    private double ratio;
+    private double leanCoefficent; // remove
+    private double leanExponent; // remove
+    private double ratio; // make this not a field but a local variable
 
     /**
      * creates a Trunk with default values
-     * todo make a yml with different default values
      */
     public Trunk() {
         setDefaultValues();

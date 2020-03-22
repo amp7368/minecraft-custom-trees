@@ -28,7 +28,6 @@ public class RotationTest {
             System.out.print("Rotate by: ");
             printVec(vec);
             System.out.print("Rotated Vec: ");
-            //todo purposly reversed
             printVec(VectorRotation.rotate(vec.z, vec.y, vec.x, baseVec));
             System.out.println();
         }

@@ -15,15 +15,13 @@ import java.util.Random;
 public class BranchStep {
     private Random random;
     private int branchAngle;
-    private double branchStealing;
     private int branchesMean;
     private double decayRate;
     private double branchWidthModifier;
     private RandomChange randomChange;
 
-    public BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate, double branchWidthModifier, RandomChange randomChange) {
+    public BranchStep(int branchAngle, int branchesMean, Random random, double decayRate, double branchWidthModifier, RandomChange randomChange) {
         this.branchAngle = branchAngle;
-        this.branchStealing = branchStealing;
         this.branchesMean = branchesMean;
         this.random = random;
         this.decayRate = decayRate;
@@ -48,15 +46,9 @@ public class BranchStep {
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
 
-        // make the unit vector of lastDirection
-        Vec3d unitLastDirection6 = new Vec3d();
         double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
         if (magnitude == 0)
             return branchSteps;
-        unitLastDirection6.x = lastDirection.x / magnitude * 6;
-        unitLastDirection6.y = lastDirection.y / magnitude * 6;
-        unitLastDirection6.z = lastDirection.z / magnitude * 6;
-
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
         double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth / startWidth, decayRate);
 
