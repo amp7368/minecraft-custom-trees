@@ -8,7 +8,6 @@ import apple.trees.tree.trunk.data.TreeArray;
 import apple.trees.tree.trunk.data.TreeStep;
 import com.sun.javafx.geom.Vec3d;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -19,14 +18,16 @@ public class BranchStep {
     private double branchStealing;
     private int branchesMean;
     private double decayRate;
+    private double branchWidthModifier;
     private RandomChange randomChange;
 
-    protected BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate, RandomChange randomChange) {
+    public BranchStep(int branchAngle, double branchStealing, int branchesMean, Random random, double decayRate, double branchWidthModifier, RandomChange randomChange) {
         this.branchAngle = branchAngle;
         this.branchStealing = branchStealing;
         this.branchesMean = branchesMean;
         this.random = random;
         this.decayRate = decayRate;
+        this.branchWidthModifier = branchWidthModifier;
         this.randomChange = randomChange;
     }
 
@@ -38,7 +39,7 @@ public class BranchStep {
      * @param lastTreeStep the tree step that was last created
      * @return all the last created steps for the branch session
      */
-    protected Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep) {
+    protected Collection<TreeStep> getBranches(TreeArray tree, TreeStep lastTreeStep, double startWidth) {
         //todo use branch grouping size with normal distribution with min of 2
         int branchesToBuild = branchesMean;
 
@@ -57,11 +58,10 @@ public class BranchStep {
         unitLastDirection6.z = lastDirection.z / magnitude * 6;
 
         Vec3d lastStepLocation = new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z);
-
-        double newWidth = lastWidth - magnitude *randomChange.getRandomChangeWidth(lastWidth, decayRate);
+        double newWidth = lastWidth - randomChange.getRandomChangeWidth(lastWidth / startWidth, decayRate);
 
         // if this branch shouldn't exist, return a collection of no branches
-        if (newWidth < Trunk.MIN_STEP_SIZE)
+        if (newWidth < Trunk.MIN_STEP_WIDTH_SIZE)
             return new ArrayList<>(1);
 
         // get an arrayList of weights of size branchesToBuild
@@ -77,11 +77,15 @@ public class BranchStep {
             branchWeights.set(i, branchWeights.get(i) / sum * branchesToBuild * newWidth);
         }
 
+        newWidth = newWidth * branchWidthModifier;
+
         // get all the different rotations
-        Collection<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchWeights);
+        ArrayList<Vec3d> rotationAmounts = GetRotations.rotationFullFromDomain(branchAngle, branchWeights);
         double x, y, z;
+        int rotationAmountsSize = rotationAmounts.size();
         // go through each rotation and make a branch for it
-        for (Vec3d rotation : rotationAmounts) {
+        for (int i = 0; i < rotationAmountsSize; i++) {
+            Vec3d rotation = rotationAmounts.get(i);
             Vec3d newDirection;
             newDirection = VectorRotation.rotate(rotation.x, rotation.y, rotation.z, unitLastDirection6);
 
@@ -89,8 +93,7 @@ public class BranchStep {
             y = lastTreeStep.y + newDirection.y;
             z = lastTreeStep.z + newDirection.z;
 
-
-            //todo maybe slope of (0,0,0) should be somefin else
+            //todo maybe slope of (0,0,0) should be somefin else maybe shouldnt be newWidth
             branchSteps.add(tree.put(x, y, z, newDirection, new Vec3d(0, 0, 0), newWidth));
 
             // make a list of the locations for the next full step

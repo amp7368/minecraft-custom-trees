@@ -28,13 +28,17 @@ public class BaseTrunk {
     private double decayRate;
     private double branchingChance;
     private int branchesMean;
+    private double branchWidthModifier;
     private Random random;
     private Vec3d startDirection;
     private RandomChange randomChange;
+    private double leanCoefficent;
+    private double leanExponent;
 
     public BaseTrunk(int trunk_width, int trunk_height, float leanMagnitude, float leanLikelihood, float maxLean,
                      Vec3d leanStart, double decayRate, double branchingChance, int branchesMean, int branchAngle,
-                     double branchMaxWidth, double branchingChanceSD, double branchingChanceMean, RandomChange randomChange, Random random) {
+                     double branchMaxWidth, double branchingChanceSD, double branchingChanceMean,double branchWidthModifier, double leanCoefficent, double leanExponent,
+                     RandomChange randomChange, Random random) {
         this.startDirection = new Vec3d(0, 1, 0);
         this.trunk_width = trunk_width;
         this.trunk_height = trunk_height;
@@ -50,6 +54,9 @@ public class BaseTrunk {
         this.randomChange = randomChange;
         this.branchingChanceSD = branchingChanceSD;
         this.branchingChanceMean = branchingChanceMean;
+        this.branchWidthModifier = branchWidthModifier;
+        this.leanCoefficent = leanCoefficent;
+        this.leanExponent = leanExponent;
         this.random = random;
         BELL_CURVE_LEFT = 1 / (branchingChanceSD * Math.sqrt(2 * Math.PI));
         this.branchStealing = .5;
@@ -66,8 +73,8 @@ public class BaseTrunk {
 
         ArrayList<TreeStep> lastTreeSteps = new ArrayList<>();
         lastTreeSteps.add(createBaseStart(tree));
-        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random, decayRate, randomChange);
-        NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate);
+        BranchStep branchStep = new BranchStep(branchAngle, branchStealing, branchesMean, random, decayRate, branchWidthModifier, randomChange);
+        NormalStep normalStep = new NormalStep(leanMagnitude, leanLikelihood, decayRate, startDirection);
         TreeStep lastTreeStep;
         // loop until all the ends are finished
         double sizeX = tree.sizeX();
@@ -92,10 +99,10 @@ public class BaseTrunk {
 
             // do either a branch or a normal step
             TreeStep currentTreeStep;
-            if (lastTreeStep.width<branchMaxWidth && random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
-                lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep));
+            if (lastTreeStep.width < branchMaxWidth && random.nextDouble() < getBranchingChance(lastTreeStep.width / trunk_width)) {
+                lastTreeSteps.addAll(branchStep.getBranches(tree, lastTreeStep,trunk_width));
             } else {
-                currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep, randomChange);
+                currentTreeStep = normalStep.getCurrentTreeStep(tree, lastTreeStep, randomChange,trunk_width);
                 lastTreeSteps.add(currentTreeStep);
             }
         }
@@ -104,7 +111,6 @@ public class BaseTrunk {
     }
 
     private double getBranchingChance(double width) {
-        System.out.println(width);
         return branchingChance * BELL_CURVE_LEFT * Math.pow(Math.E, -0.5 * (Math.pow(width - branchingChanceMean, 2))
                 / Math.pow(branchingChanceSD, 2));
     }

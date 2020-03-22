@@ -31,8 +31,7 @@ public class Widthify {
                 }
             }
         }
-
-
+        System.out.println("Added width to the base trunk");
         return newTree;
     }
 

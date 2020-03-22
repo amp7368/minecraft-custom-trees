@@ -6,16 +6,19 @@ import apple.trees.tree.trunk.creation.utils.RandomChange;
 import apple.trees.tree.trunk.creation.utils.Widthify;
 import apple.trees.tree.trunk.data.TreeArray;
 import com.sun.javafx.geom.Vec3d;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Trunk {
 
-    public static final Double MIN_STEP_SIZE = 0.5;
+    public static final Double MIN_STEP_WIDTH_SIZE = 0.5;
     private int trunk_width;
     private int trunk_height;
     private float leanMagnitude;
@@ -25,6 +28,10 @@ public class Trunk {
     private int branchesMean;
     private int branchAngle;
     private double branchMaxWidth;
+    private double branchWidthModifier;
+    private int[] firstAngleX;
+    private int[] firstAngleY;
+    private int[] firstAngleZ;
     private RandomChange randomChange;
     private Random random = new Random();
     private double branchingChance;
@@ -33,6 +40,8 @@ public class Trunk {
     private double widthDecayRate;
     private double widthDecayMean;
     private double widthDecayStandardDeviation;
+    private double leanCoefficent;
+    private double leanExponent;
 
     /**
      * creates a Trunk with default values
@@ -65,6 +74,7 @@ public class Trunk {
         trunk_width = config.getInt(YMLNavigate.TRUNK_WIDTH);
         trunk_height = config.getInt(YMLNavigate.TRUNK_HEIGHT);
         leanLikelihood = (float) config.getDouble(YMLNavigate.LEAN_LIKELIHOOD);
+        leanMagnitude = (float) config.getDouble(YMLNavigate.LEAN_MAGNITUDE);
         maxLean = (float) config.getDouble(YMLNavigate.MAX_LEAN);
         double leanStartX = config.getDouble(YMLNavigate.LEAN_START_X);
         double leanStartY = config.getDouble(YMLNavigate.LEAN_START_Y);
@@ -73,7 +83,9 @@ public class Trunk {
 
         branchesMean = config.getInt(YMLNavigate.BRANCHES_MEAN);
         branchAngle = config.getInt(YMLNavigate.BRANCH_ANGLE);
-        branchMaxWidth= config.getDouble(YMLNavigate.BRANCH_MAX_WIDTH);
+        branchMaxWidth = config.getDouble(YMLNavigate.BRANCH_MAX_WIDTH);
+        branchWidthModifier = config.getDouble(YMLNavigate.BRANCH_WIDTH_MODIFIER);
+
         config = configOrig.getConfigurationSection(YMLNavigate.FORMULAS);
         assert config != null;
         branchingChance = config.getDouble(YMLNavigate.BRANCHING_CHANCE);
@@ -82,29 +94,65 @@ public class Trunk {
         widthDecayRate = config.getDouble(YMLNavigate.DECAY_RATE);
         widthDecayMean = config.getDouble(YMLNavigate.WIDTH_DECAY_MEAN);
         widthDecayStandardDeviation = config.getDouble(YMLNavigate.WIDTH_DECAY_SD);
-        randomChange = new RandomChange(random, widthDecayStandardDeviation, widthDecayMean);
+        leanCoefficent = config.getDouble(YMLNavigate.LEAN_COEFFICENT);
+        leanExponent = config.getDouble(YMLNavigate.LEAN_EXPONENT);
+        randomChange = new RandomChange(random, leanCoefficent, leanExponent, widthDecayStandardDeviation, widthDecayMean);
+
+
+        ArrayList<Integer> angleXs = new ArrayList<>();
+        ArrayList<Integer> angleYs = new ArrayList<>();
+        ArrayList<Integer> angleZs = new ArrayList<>();
+        ConfigurationSection configAngles = configOrig.getConfigurationSection(YMLNavigate.FIRST_ANGLES);
+        assert configAngles != null;
+        for (int i = 1; ; i++) {
+            config = configAngles.getConfigurationSection(YMLNavigate.BRANCH + i);
+            if (config == null) {
+                break;
+            }
+            angleXs.add(config.getInt("angleX"));
+            angleYs.add(config.getInt("angleY"));
+            angleZs.add(config.getInt("angleZ"));
+        }
+        //todo optimize
+        firstAngleX = new int[angleXs.size()];
+        for (int i = 0; i < angleXs.size(); i++) {
+            firstAngleX[i] = angleXs.get(i);
+        }
+        firstAngleY = new int[angleYs.size()];
+        for (int i = 0; i < angleYs.size(); i++) {
+            firstAngleY[i] = angleYs.get(i);
+        }
+        firstAngleZ = new int[angleZs.size()];
+        for (int i = 0; i < angleZs.size(); i++) {
+            firstAngleZ[i] = angleZs.get(i);
+        }
+
+
     }
 
     /**
      * sets default values for this tree
      */
     private void setDefaultValues() {
-        trunk_width = 5;
+        trunk_width = 4;
         trunk_height = 100;
-        leanMagnitude = (float) .1;
+        leanMagnitude = (float) .15;
         leanLikelihood = 3;
         maxLean = 10;
         leanStart = new Vec3d(0, 3, 0);
-        widthDecayRate = .3;
-        branchingChance = .4;
-        branchesMean = 4;
-        branchAngle = 20;
-        branchMaxWidth = 3;
+        widthDecayRate = .4;
+        branchingChance = .5;
+        branchesMean = 3;
+        branchAngle = 25;
+        branchMaxWidth = 4;
         branchingChanceMean = 0.5;
-        branchingChanceStandardDeviation = 0.3;
-        widthDecayMean = 0.41;
-        widthDecayStandardDeviation = 0.2;
-        randomChange = new RandomChange(random, widthDecayStandardDeviation, widthDecayMean);
+        branchingChanceStandardDeviation = 0.5;
+        branchWidthModifier = .9;
+        widthDecayMean = 0.35;
+        widthDecayStandardDeviation = 0.3;
+        leanCoefficent = 2;
+        leanExponent = 2;
+        randomChange = new RandomChange(random, leanCoefficent, leanExponent, widthDecayStandardDeviation, widthDecayMean);
     }
 
     /**
@@ -112,7 +160,9 @@ public class Trunk {
      */
     public TreeArray makeTrunk() {
         BaseTrunk baseTrunk = new BaseTrunk(trunk_width, trunk_height, leanMagnitude, leanLikelihood, maxLean, leanStart,
-                widthDecayRate, branchingChance, branchesMean, branchAngle,branchMaxWidth, branchingChanceStandardDeviation, branchingChanceMean, randomChange, random);
+                widthDecayRate, branchingChance, branchesMean, branchAngle, branchMaxWidth, branchingChanceStandardDeviation,
+                branchingChanceMean, branchWidthModifier, leanCoefficent, leanExponent, randomChange, random);
+        System.out.println("Made a base trunk");
         return Widthify.addWidth(baseTrunk.createBaseTrunk());
     }
 

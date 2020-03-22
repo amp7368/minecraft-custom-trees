@@ -13,31 +13,32 @@ public class ResolutionDecreaser {
      *              ratio is better if it is an int
      * @return the new tree
      */
-    public static TreeArray pixelify(TreeArray tree, double ratio) {
+    public static TreeArray pixelify(TreeArray tree, double ratio, double ratioModifier) {
         // create a new tree of the correct-ish size
-        int sizeX = (int) (tree.sizeX() / ratio);
-        int sizeY = (int) (tree.sizeY() / ratio);
-        int sizeZ = (int) (tree.sizeZ() / ratio);
-        TreeArray newTree = new TreeArray(sizeX, sizeY, sizeZ);
-        int intRatio = (int) ratio;
+        int sizeX = tree.sizeX();
+        int sizeY = tree.sizeY();
+        int sizeZ = tree.sizeZ();
+        TreeArray newTree = new TreeArray((int)(sizeX/ratio), (int)(sizeY/ratio),(int)(sizeZ/ratio));
         // loop through every square of the new tree
-        for (int x = 0; x < sizeX; x++) {
-            for (int y = 0; y < sizeY; y++) {
-                for (int z = 0; z < sizeZ; z++) {
-                    int xOld = (int) (x * ratio);
-                    int yOld = (int) (y * ratio);
-                    int zOld = (int) (z * ratio);
+        for (double x = ratio; x < sizeX; x += ratio) {
+            for (double y = ratio; y < sizeY; y += ratio) {
+                for (double z = ratio; z < sizeZ; z += ratio) {
 
-                    // if we should add it to the avg  todo change 0
-                    if (tree.getAvgTrunkTrue(xOld, yOld, zOld, intRatio) > intRatio) {
-                        Vec3d newDirection = tree.getAvgDirection(xOld, yOld, zOld, intRatio);
-                        Vec3d newSlopeOfSlope = tree.getAvgSlopeOfSlope(xOld, yOld, zOld, intRatio);
-                        double newWidth = tree.getAvgWidth(xOld, yOld, zOld, intRatio);
-                        newTree.put(x, y, z, newDirection, newSlopeOfSlope, newWidth);
+                    int xNew = (int) (x / ratio);
+                    int yNew = (int) (y / ratio);
+                    int zNew = (int) (z / ratio);
+
+                    // if we should add it to the avg > (1/3 of the blocks)
+                    if (tree.getAvgTrunkTrue(xNew, yNew, zNew, ratio * 2) > 1.0 / ratio * ratioModifier) {
+                        Vec3d newDirection = tree.getAvgDirection(xNew, yNew, zNew, ratio * 2);
+                        Vec3d newSlopeOfSlope = tree.getAvgSlopeOfSlope(xNew, yNew, zNew, ratio * 2);
+                        double newWidth = tree.getAvgWidth(xNew, yNew, zNew, ratio * 2);
+                        newTree.put(xNew, yNew, zNew, newDirection, newSlopeOfSlope, newWidth);
                     }
                 }
             }
         }
+        System.out.println("Reduced the size of the tree");
         return newTree;
     }
 

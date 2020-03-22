@@ -12,11 +12,13 @@ public class NormalStep {
     private double leanMagnitude;
     private double leanLikelihood;
     private double decayRate;
+    private Vec3d firstDirection;
 
-    protected NormalStep(double leanMagnitude, double leanLikelihood, double decayRate) {
+    protected NormalStep(double leanMagnitude, double leanLikelihood, double decayRate, Vec3d firstDirection) {
         this.leanMagnitude = leanMagnitude;
         this.leanLikelihood = leanLikelihood;
         this.decayRate = decayRate;
+        this.firstDirection = firstDirection;
     }
 
     /**
@@ -28,7 +30,7 @@ public class NormalStep {
      * @param randomChange is the randomChange object to give random changes based on the treeType
      * @return the new main step in the tree
      */
-    protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, RandomChange randomChange) {
+    protected TreeStep getCurrentTreeStep(TreeArray tree, TreeStep lastTreeStep, RandomChange randomChange,double trunkWidth) {
         Vec3d lastDirection = lastTreeStep.direction;
         Vec3d lastSlopeOfSlope = lastTreeStep.slopeOfSlope;
         double lastWidth = lastTreeStep.width;
@@ -37,9 +39,8 @@ public class NormalStep {
         double magnitude = Math.sqrt(lastDirection.x * lastDirection.x + lastDirection.y * lastDirection.y + lastDirection.z * lastDirection.z);
 
         // get the width of the newStep
-        double newWidth = lastWidth - magnitude * randomChange.getRandomChangeWidth(lastWidth, decayRate);
-        // todo magic value
-        if (newWidth < Trunk.MIN_STEP_SIZE)
+        double newWidth = lastWidth -  randomChange.getRandomChangeWidth(lastWidth/trunkWidth, decayRate);
+        if (newWidth < Trunk.MIN_STEP_WIDTH_SIZE)
             return null;
 
         // get the location of the newStep
@@ -68,8 +69,7 @@ public class NormalStep {
         Vec3d newDirection = new Vec3d(newDirectionX, newDirectionY, newDirectionZ);
 
         // get slopeOfSlope of the newStep
-        Vec3d newSlopeOfSlope = randomChange.getRandomChangeSlopeOfSlope(lastSlopeOfSlope, leanMagnitude, leanLikelihood);
-
+        Vec3d newSlopeOfSlope = randomChange.getRandomNextSlopeOfSlope(lastSlopeOfSlope, leanMagnitude, leanLikelihood, lastDirection, firstDirection, newWidth);
 
         // make a list of the locations for the next full step
         ArrayList<Vec3d> locations = TrailingSteps.getTrailingSquares(lastDirection, new Vec3d(lastTreeStep.x, lastTreeStep.y, lastTreeStep.z));

@@ -21,4 +21,9 @@ public class YMLNavigate {
     public static final String WIDTH_DECAY_SD = "widthStandardDeviation";
     public static final String MATERIAL = "material";
     public static final String BRANCH_MAX_WIDTH = "branchMaxWidth";
+    public static final String LEAN_COEFFICENT = "lean_coefficent";
+    public static final String LEAN_EXPONENT = "lean_exponent";
+    public static final String RATIO_MODIFIER = "ratioModifier";
+    public static final String RATIO = "ratio";
+    public static final String BRANCH_WIDTH_MODIFIER = "branchWidthModifier";
 }

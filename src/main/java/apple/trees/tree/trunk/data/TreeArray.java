@@ -29,7 +29,6 @@ public class TreeArray {
     public TreeStep get(int x, int y, int z) {
         if (x < sizeX() && y < sizeY() && z < sizeZ() && 0 <= x && 0 <= y && 0 <= z)
             return tree[x][y][z];
-        System.out.println("oof");
         return null;
     }
 
@@ -99,7 +98,7 @@ public class TreeArray {
      * @param distance how far to look around that xyz (-1 for default 3)
      * @return the avg direction
      */
-    public Vec3d getAvgDirection(int x, int z, int y, int distance) {
+    public Vec3d getAvgDirection(double x, double z, double y, double distance) {
         if (distance == -1) {
             distance = 3;
         }
@@ -108,15 +107,11 @@ public class TreeArray {
         double avgY = 0;
         double avgZ = 0;
         int totalNotNull = 0;
-        for (int i = -distance; i <= distance; i++) {
-            for (int j = -distance; j <= distance; j++) {
-                for (int k = -distance; k <= distance; k++) {
+        for (double i = -distance; i <= distance; i++) {
+            for (double j = -distance; j <= distance; j++) {
+                for (double k = -distance; k <= distance; k++) {
                     TreeStep treeStep;
-                    try {
-                        treeStep = tree[x + i][y + j][z + k];
-                    } catch (IndexOutOfBoundsException ignored) {
-                        continue;
-                    }
+                    treeStep = get((int) (x + i), (int) (y + j), (int) (z + k));
                     if (treeStep == null)
                         continue;
                     Vec3d vec = treeStep.direction;
@@ -145,7 +140,7 @@ public class TreeArray {
      * @param distance how far to look around that xyz (-1 for default 3)
      * @return the avg slopeOfSlope
      */
-    public Vec3d getAvgSlopeOfSlope(int x, int y, int z, int distance) {
+    public Vec3d getAvgSlopeOfSlope(double x, double y, double z, double distance) {
         if (distance == -1) {
             distance = 3;
         }
@@ -154,16 +149,11 @@ public class TreeArray {
         double avgY = 0;
         double avgZ = 0;
         int totalNotNull = 0;
-        for (int i = -distance; i <= distance; i++) {
-            for (int j = -distance; j <= distance; j++) {
-                for (int k = -distance; k <= distance; k++) {
+        for (double i = -distance; i <= distance; i++) {
+            for (double j = -distance; j <= distance; j++) {
+                for (double k = -distance; k <= distance; k++) {
                     TreeStep treeStep;
-                    try {
-                        treeStep = tree[x + i][y + j][z + k];
-
-                    } catch (IndexOutOfBoundsException ignored) {
-                        continue;
-                    }
+                        treeStep = get((int) (x + i), (int) (y + j), (int) (z + k));
                     if (treeStep == null)
                         continue;
                     totalNotNull++;
@@ -191,23 +181,18 @@ public class TreeArray {
      * @param distance how far to look around that xyz (-1 for default 3)
      * @return the avg width
      */
-    public double getAvgWidth(int x, int y, int z, int distance) {
+    public double getAvgWidth(double x, double y, double z, double distance) {
         if (distance == -1) {
             distance = 3;
         }
         distance = distance / 2;
         double avg = 0;
         int totalNotNull = 0;
-        for (int i = -distance; i <= distance; i++) {
-            for (int j = -distance; j <= distance; j++) {
-                for (int k = -distance; k <= distance; k++) {
+        for (double i = -distance; i <= distance; i++) {
+            for (double j = -distance; j <= distance; j++) {
+                for (double k = -distance; k <= distance; k++) {
                     TreeStep treeStep;
-                    try {
-                        treeStep = tree[x + i][y + j][z + k];
-
-                    } catch (IndexOutOfBoundsException ignored) {
-                        continue;
-                    }
+                    treeStep = get((int) (x + i), (int) (y + j), (int) (z + k));
                     if (treeStep == null)
                         continue;
                     avg += treeStep.width;
@@ -223,22 +208,18 @@ public class TreeArray {
     }
 
 
-    public double getAvgTrunkTrue(int x, int y, int z, int distance) {
+    public double getAvgTrunkTrue(double x, double y, double z, double distance) {
         if (distance == -1) {
             distance = 3;
         }
         distance = distance / 2;
         int trues = 0;
         int totals = 0;
-        for (int i = -distance; i <= distance; i++) {
-            for (int j = -distance; j <= distance; j++) {
-                for (int k = -distance; k <= distance; k++) {
+        for (double i = -distance; i <= distance; i++) {
+            for (double j = -distance; j <= distance; j++) {
+                for (double k = -distance; k <= distance; k++) {
                     TreeStep treeStep;
-                    try {
-                        treeStep = tree[x + i][y + j][z + k];
-                    } catch (IndexOutOfBoundsException ignored) {
-                        continue;
-                    }
+                    treeStep = get((int) (x + i), (int) (y + j), (int) (z + k));
                     if (treeStep != null) {
                         trues++;
                     }
@@ -251,43 +232,6 @@ public class TreeArray {
         }
         return ((double) trues) / totals;
     }
-
-    /**
-     * gets all the squares nearby to the location sizeof (0, 1, 2, or 3) returned
-     *
-     * @param xBroad the x location
-     * @param yBroad the y location
-     * @param zBroad the z location
-     * @param xFine  the exact x location
-     * @param yFine  the exact y location
-     * @param zFine  the exact z location
-     * @return all the x,y,z's that are close to the xFine,yFine,zFine
-     */
-    private static ArrayList<Vec3d> getNearbySquares(int xBroad, int yBroad, int zBroad, double xFine, double yFine, double zFine) {
-        ArrayList<Vec3d> locations = new ArrayList<>(2);
-
-        // see if it is close to a boundary
-        double xDecimal = xFine - xBroad;
-        double yDecimal = yFine - yBroad;
-        double zDecimal = zFine - zBroad;
-        if (xDecimal < .25) {
-            locations.add(new Vec3d(xBroad - 1, yBroad, zBroad));
-        } else if (xDecimal > .75) {
-            locations.add(new Vec3d(xBroad + 1, yBroad, zBroad));
-        }
-        if (yDecimal < .25) {
-            locations.add(new Vec3d(xBroad, yBroad - 1, zBroad));
-        } else if (yDecimal > .75) {
-            locations.add(new Vec3d(xBroad, yBroad + 1, zBroad));
-        }
-        if (zDecimal < .25) {
-            locations.add(new Vec3d(xBroad, yBroad - 1, zBroad));
-        } else if (zDecimal > .75) {
-            locations.add(new Vec3d(xBroad, yBroad + 1, zBroad));
-        }
-        return locations;
-    }
-
 
     public void print() {
         for (int x = 0; x < sizeX(); x++) {

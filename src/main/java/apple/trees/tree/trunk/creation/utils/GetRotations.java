@@ -1,10 +1,7 @@
 package apple.trees.tree.trunk.creation.utils;
 
 import apple.trees.tree.trunk.creation.Trunk;
-import com.mysql.fabric.xmlrpc.base.Array;
 import com.sun.javafx.geom.Vec3d;
-import org.bukkit.Rotation;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +22,11 @@ public class GetRotations {
      * @param branchWeights an array of the branches' weights so that we know how greatly they impact each other
      * @return a collection of rotations to be made in the x, y, and z.
      */
-    public static Collection<Vec3d> rotationFullFromDomain(double branchAngle, ArrayList<Double> branchWeights) {
+    public static ArrayList<Vec3d> rotationFullFromDomain(double branchAngle, ArrayList<Double> branchWeights) {
         // remove unneeded branchWeights
         int branchesToBuild = branchWeights.size();
         for (int i = 0; i < branchesToBuild; i++) {
-            if (branchWeights.get(i) < Trunk.MIN_STEP_SIZE) {
+            if (branchWeights.get(i) < Trunk.MIN_STEP_WIDTH_SIZE) {
                 branchWeights.remove(i--);
                 branchesToBuild--;
             }
@@ -39,7 +36,6 @@ public class GetRotations {
         ArrayList<Vec3d> rotations;
         if (branchesToBuild == 0) {
             rotations = new ArrayList<>();
-            rotations.add(new Vec3d(0, 0, 0));
         } else {
             rotations = branchesFromDomain(branchesToBuild);
         }

@@ -30,45 +30,48 @@ public class PlaceTreeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         Trunk trunk;
+        Material material;
+        double ratioModifier;
+        int ratio = 3;
         if (args.length == 1) {
             trunk = new Trunk(args[0], plugin);
-
+            File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, args[0], ".yml"));
+            if (!file.exists()) {
+                material = Material.DARK_OAK_WOOD;
+                ratioModifier = 0.5;
+            } else {
+                YamlConfiguration configOrig = YamlConfiguration.loadConfiguration(file);
+                ConfigurationSection config = configOrig.getConfigurationSection("vars");
+                assert config != null;
+                material = Material.getMaterial(config.getString(YMLNavigate.MATERIAL));
+                ratioModifier = config.getDouble(YMLNavigate.RATIO_MODIFIER);
+                ratio = config.getInt(YMLNavigate.RATIO);
+            }
         } else {
             // create a trunk with default values
             trunk = new Trunk();
+            ratioModifier = .5;
+            material = Material.DARK_OAK_WOOD;
         }
         // make a trunk given the default values in trunk
         TreeArray tree = trunk.makeTrunk();
 
         // make the leaves given a tree with a trunk in place
 
-        // reduce the resolution of the entire tree
-
-        Material material;
-        File file = new File(String.format("%s%s%s%s%s%s", plugin.getDataFolder(), File.separator, "treePresets", File.separator, args[0], ".yml"));
-        if (!file.exists()) {
-            material = Material.DARK_OAK_WOOD;
-        } else {
-            YamlConfiguration configOrig = YamlConfiguration.loadConfiguration(file);
-            ConfigurationSection config = configOrig.getConfigurationSection("vars");
-            assert config != null;
-            material = Material.getMaterial(config.getString(YMLNavigate.MATERIAL));
-        }
-
-
         // place the tree near the player todo should be at a given location later
         Location loc = Bukkit.getPlayer(commandSender.getName()).getLocation();
-        placeTree(tree, loc, material);
+        placeTree(tree, loc, material, plugin);
 
-        tree = ResolutionDecreaser.pixelify(tree, 2);
+        // reduce the resolution of the entire tree
+        tree = ResolutionDecreaser.pixelify(tree, ratio, ratioModifier);
         Bukkit.getServer().broadcastMessage("made a treeBig!");
         loc.setX(loc.getX() - 50);
-        placeTree(tree, loc, material);
+        placeTree(tree, loc, material, plugin);
         Bukkit.getServer().broadcastMessage("made a treeSmall!");
         return false;
     }
 
-    public static void placeTree(TreeArray tree, Location location, Material material) {
+    public static void placeTree(TreeArray tree, Location location, Material material, JavaPlugin plugin) {
         // the starting location where tree should be placed
         int startX = location.getBlockX();
         int startY = location.getBlockY();
@@ -79,23 +82,25 @@ public class PlaceTreeCommand implements CommandExecutor {
         int sizeY = tree.sizeY();
         int sizeZ = tree.sizeZ();
 
+
         World world = location.getWorld();
-        for (int x = startX, xorig = 0; xorig < sizeX; x++, xorig++) {
-            for (int y = startY, yorig = 0; yorig < sizeY; y++, yorig++) {
-                for (int z = startZ, zorig = 0; zorig < sizeZ; z++, zorig++) {
-                    if (tree.get(xorig, yorig, zorig) != null) {
-//                        Material material;
-//                        double width = tree.get(xorig, yorig, zorig).width;
-//                        if (width < 1) material = Material.BIRCH_WOOD;
-//                        else if (width < 2) material = Material.ACACIA_WOOD;
-//                        else if (width < 3) material = Material.OAK_WOOD;
-//                        else if (width < 4) material = Material.SPRUCE_WOOD;
-//                        else material = Material.DARK_OAK_WOOD;
-                        world.getBlockAt(x, y, z).setType(material);
+        float i = 0;
+        for (int x = startX, xorig = 0; xorig < sizeX; x++, xorig++, i += .1) {
+            int finalXorig = xorig;
+            int finalX = x;
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+                    () -> {
+                        for (int y = startY, yorig = 0; yorig < sizeY; y++, yorig++) {
+                            for (int z = startZ, zorig = 0; zorig < sizeZ; z++, zorig++) {
+                                if (tree.get(finalXorig, yorig, zorig) != null) {
+                                    world.getBlockAt(finalX, y, z).setType(material);
+                                }
+                            }
+                        }
                     }
-                }
-            }
+                    , (int) i);
         }
+        System.out.println("Placed a tree");
     }
 
 
